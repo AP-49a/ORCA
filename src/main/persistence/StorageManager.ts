@@ -56,6 +56,11 @@ export class StorageManager {
     const defaultSettings: BrowserSettings = {
       autoSuspend: true,
       suspendTimeoutMinutes: 15,
+      suspendAggressiveness: 'balanced',
+      memoryPressureThresholdPercent: 80,
+      neverSuspendPinned: true,
+      neverSuspendMedia: true,
+      neverSuspendDownloads: true,
       autoHibernate: true,
       hibernateTimeoutDays: 3,
       neverSuspendDomains: [

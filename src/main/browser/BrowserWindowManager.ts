@@ -1,4 +1,4 @@
-import { BrowserWindow, app } from 'electron';
+import { BrowserWindow, app, nativeImage } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { TabManager } from './TabManager';
@@ -27,6 +27,17 @@ export class BrowserWindowManager {
       console.log(`[BrowserWindowManager] Preload verified at: ${preloadPath}`);
     }
 
+    // Resolve application icon
+    const possibleIconPaths = [
+      path.join(app.getAppPath(), 'assets/orca.ico'),
+      path.join(process.resourcesPath, 'assets/orca.ico'),
+      path.join(__dirname, '../../assets/orca.ico'),
+      path.join(__dirname, '../../../assets/orca.ico'),
+      path.join(app.getAppPath(), 'assets/orca-icon-256.png'),
+    ];
+    const foundPath = possibleIconPaths.find((p) => fs.existsSync(p));
+    const appIcon = foundPath ? nativeImage.createFromPath(foundPath) : undefined;
+
     this.mainWindow = new BrowserWindow({
       width: 1360,
       height: 880,
@@ -36,6 +47,7 @@ export class BrowserWindowManager {
       titleBarStyle: 'hidden',
       titleBarOverlay: false,
       backgroundColor: '#F8FAFC',
+      icon: appIcon || foundPath,
       webPreferences: {
         preload: preloadPath,
         contextIsolation: true,
@@ -43,6 +55,10 @@ export class BrowserWindowManager {
         sandbox: false,
       },
     });
+
+    if (appIcon && !appIcon.isEmpty()) {
+      this.mainWindow.setIcon(appIcon);
+    }
 
     this.tabManager.setWindow(this.mainWindow);
 
@@ -61,16 +77,17 @@ export class BrowserWindowManager {
     };
 
     this.mainWindow.on('resize', updateBounds);
+    this.mainWindow.on('will-resize', updateBounds);
+    this.mainWindow.on('resized', updateBounds);
     this.mainWindow.on('maximize', updateBounds);
     this.mainWindow.on('unmaximize', updateBounds);
-    this.mainWindow.on('enter-full-screen', () => {
-      updateBounds();
-    });
-    this.mainWindow.on('leave-full-screen', () => {
-      updateBounds();
-    });
+    this.mainWindow.on('restore', updateBounds);
+    this.mainWindow.on('enter-full-screen', updateBounds);
+    this.mainWindow.on('leave-full-screen', updateBounds);
 
-    // Initial bounds calculation
+    // Initial bounds calculation immediately and after layout stabilization
+    updateBounds();
+    setTimeout(updateBounds, 100);
     setTimeout(updateBounds, 300);
 
     // Load URL

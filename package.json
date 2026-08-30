@@ -5,13 +5,14 @@
   "description": "ORCA - More tabs. Less memory.",
   "main": "dist-electron/main/index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "build:ts": "tsc -b",
-    "test": "npx tsx tests/memoryEngine.test.ts",
-    "preview": "vite preview",
-    "start": "electron ."
-  },
+  "dev": "vite",
+  "build": "tsc && vite build",
+  "build:ts": "tsc -b",
+  "test": "npx tsx tests/memoryEngine.test.ts",
+  "preview": "vite preview",
+  "start": "electron .",
+  "dist": "npm run build && electron-builder"
+},
   "keywords": [
     "browser",
     "electron",
@@ -43,5 +44,42 @@
     "vite": "^6.0.3",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6"
+  },
+  "build": {
+    "appId": "com.orca.browser",
+    "productName": "ORCA",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "assets",
+        "to": "assets"
+      }
+    ],
+    "win": {
+      "icon": "assets/orca.ico",
+      "executableName": "ORCA",
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/orca.ico",
+      "uninstallerIcon": "assets/orca.ico",
+      "installerHeaderIcon": "assets/orca.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "ORCA"
+    }
   }
 }

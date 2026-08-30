@@ -89,6 +89,15 @@
   -webkit-app-region: no-drag;
 }
 
+.orca-brand-logo {
+  color: #000000;
+  transition: color 0.15s ease-in-out;
+}
+
+[data-theme="dark"] .orca-brand-logo {
+  color: #FFFFFF;
+}
+
 .orca-modal-backdrop {
   position: fixed;
   inset: 0;

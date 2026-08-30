@@ -233,27 +233,136 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 />
               </div>
 
+              {/* Suspension Aggressiveness Mode */}
+              {settings.autoSuspend && (
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-[var(--text-primary)]">Suspension Aggressiveness Mode</label>
+                  <div className="grid grid-cols-3 gap-2.5">
+                    {[
+                      { id: 'conservative', label: 'Conservative', desc: '60 min idle • minimal interventions' },
+                      { id: 'balanced', label: 'Balanced', desc: '15 min idle • standard optimization' },
+                      { id: 'aggressive', label: 'Aggressive', desc: '5 min idle • fast RAM recovery' },
+                    ].map(({ id, label, desc }) => {
+                      const isSelected = (settings.suspendAggressiveness || 'balanced') === id;
+                      return (
+                        <button
+                          key={id}
+                          type="button"
+                          onClick={() => {
+                            const timeoutMap: Record<string, number> = { conservative: 60, balanced: 15, aggressive: 5 };
+                            onUpdateSettings({
+                              suspendAggressiveness: id as any,
+                              suspendTimeoutMinutes: timeoutMap[id] || 15,
+                            });
+                          }}
+                          className={`p-3 rounded-2xl text-left border transition-all flex flex-col justify-between ${
+                            isSelected
+                              ? 'bg-[var(--accent-subtle)] border-[var(--accent)] shadow-xs'
+                              : 'bg-[var(--surface-subtle)] border-[var(--border)] hover:bg-[var(--surface-hover)]'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between w-full mb-1">
+                            <span className={`text-xs font-bold ${isSelected ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'}`}>
+                              {label}
+                            </span>
+                            <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
+                              isSelected ? 'border-[var(--accent)] bg-[var(--accent)]' : 'border-[var(--border)]'
+                            }`}>
+                              {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                            </div>
+                          </div>
+                          <div className="text-[10px] text-[var(--text-muted)]">
+                            {desc}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Suspend Timeout */}
               {settings.autoSuspend && (
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-[var(--text-primary)]">Suspend inactive tabs after:</label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {[15, 30, 60, 120].map((mins) => (
+                  <label className="text-xs font-bold text-[var(--text-primary)]">Suspend Inactive Tabs After:</label>
+                  <div className="grid grid-cols-5 gap-2">
+                    {[5, 15, 30, 60, 120].map((mins) => (
                       <button
                         key={mins}
                         onClick={() => onUpdateSettings({ suspendTimeoutMinutes: mins })}
-                        className={`py-2 px-3 rounded-xl text-xs font-semibold border transition-all ${
+                        className={`py-2 px-2.5 rounded-xl text-xs font-semibold border transition-all text-center ${
                           settings.suspendTimeoutMinutes === mins
                             ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-xs'
                             : 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border-[var(--border)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]'
                         }`}
                       >
-                        {mins < 60 ? `${mins} min` : `${mins / 60} hour${mins > 60 ? 's' : ''}`}
+                        {mins < 60 ? `${mins} min` : `${mins / 60} hr${mins > 60 ? 's' : ''}`}
                       </button>
                     ))}
                   </div>
                 </div>
               )}
+
+              {/* Memory Pressure Threshold */}
+              {settings.autoSuspend && (
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-[var(--text-primary)]">
+                    System Memory Pressure Trigger Threshold:
+                  </label>
+                  <p className="text-[11px] text-[var(--text-muted)] -mt-1">
+                    When system RAM exceeds this threshold, idle timeouts are accelerated to free RAM.
+                  </p>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[60, 70, 80, 90].map((pct) => (
+                      <button
+                        key={pct}
+                        onClick={() => onUpdateSettings({ memoryPressureThresholdPercent: pct })}
+                        className={`py-2 px-3 rounded-xl text-xs font-semibold border transition-all text-center ${
+                          (settings.memoryPressureThresholdPercent || 80) === pct
+                            ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-xs'
+                            : 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border-[var(--border)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]'
+                        }`}
+                      >
+                        {pct}% RAM
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Protected Tabs Rules */}
+              <div className="space-y-2.5">
+                <label className="text-xs font-bold text-[var(--text-primary)]">Protected Tabs (Never Auto-Suspend)</label>
+                <div className="space-y-2 p-3 rounded-2xl bg-[var(--surface-subtle)] border border-[var(--border)]">
+                  <label className="flex items-center space-x-2.5 text-xs text-[var(--text-primary)] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={settings.neverSuspendPinned ?? true}
+                      onChange={(e) => onUpdateSettings({ neverSuspendPinned: e.target.checked })}
+                      className="w-4 h-4 accent-sky-600 rounded cursor-pointer"
+                    />
+                    <span>Pinned tabs</span>
+                  </label>
+                  <label className="flex items-center space-x-2.5 text-xs text-[var(--text-primary)] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={settings.neverSuspendMedia ?? true}
+                      onChange={(e) => onUpdateSettings({ neverSuspendMedia: e.target.checked })}
+                      className="w-4 h-4 accent-sky-600 rounded cursor-pointer"
+                    />
+                    <span>Tabs playing audio or media</span>
+                  </label>
+                  <label className="flex items-center space-x-2.5 text-xs text-[var(--text-primary)] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={settings.neverSuspendDownloads ?? true}
+                      onChange={(e) => onUpdateSettings({ neverSuspendDownloads: e.target.checked })}
+                      className="w-4 h-4 accent-sky-600 rounded cursor-pointer"
+                    />
+                    <span>Tabs with active file downloads</span>
+                  </label>
+                </div>
+              </div>
 
               {/* Auto Hibernate Toggle */}
               <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--surface-subtle)] border border-[var(--border)]">
@@ -332,6 +441,29 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   ))}
                 </div>
               </div>
+
+              {/* Reset to Defaults */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    onUpdateSettings({
+                      autoSuspend: true,
+                      suspendTimeoutMinutes: 15,
+                      suspendAggressiveness: 'balanced',
+                      memoryPressureThresholdPercent: 80,
+                      neverSuspendPinned: true,
+                      neverSuspendMedia: true,
+                      neverSuspendDownloads: true,
+                      autoHibernate: true,
+                      hibernateTimeoutDays: 3,
+                    })
+                  }
+                  className="px-3 py-1.5 rounded-xl border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] text-xs font-medium transition-colors"
+                >
+                  Reset Memory Settings to Defaults
+                </button>
+              </div>
             </div>
           )}
 
@@ -364,11 +496,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <OrcaLogo className="w-9 h-9" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-[var(--text-primary)]">ORCA Browser</h3>
-                <p className="text-xs text-[var(--accent)] font-semibold">Version 1.0.0 (Deep Ocean Core)</p>
+                <h3 className="text-lg font-bold text-[var(--text-primary)]">ORCA</h3>
+                <p className="text-xs text-[var(--text-secondary)] font-medium">More tabs. Less memory.</p>
+                <p className="text-xs text-[var(--accent)] font-semibold mt-1">Version 1.0.0 (Deep Ocean Core)</p>
               </div>
               <p className="text-xs text-[var(--text-muted)] max-w-sm mx-auto">
-                &ldquo;More tabs. Less memory.&rdquo; Designed for high performance tab management with intelligent Chromium WebContents suspension.
+                Designed for high performance tab management with intelligent Chromium WebContents suspension.
               </p>
             </div>
           )}

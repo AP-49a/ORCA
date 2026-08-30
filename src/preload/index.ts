@@ -68,6 +68,16 @@ export interface OrcaAPI {
   getSettings: () => Promise<BrowserSettings>;
   updateSettings: (settings: Partial<BrowserSettings>) => Promise<BrowserSettings>;
 
+  // Tab keep-awake
+  setTabKeepAwake: (tabId: string, keepAwake: boolean) => Promise<void>;
+
+  // Workspace memory
+  suspendWorkspace: (workspaceId: string) => Promise<{ freedMB: number; suspendedCount: number }>;
+  restoreWorkspace: (workspaceId: string) => Promise<void>;
+
+  // Panel Overlay
+  setPanelOverlayState: (isOpen: boolean, panelName: string) => Promise<string | null>;
+
   // Window Controls
   minimizeWindow: () => Promise<void>;
   maximizeWindow: () => Promise<void>;
@@ -107,6 +117,7 @@ const api: OrcaAPI = {
   hibernateTab: (tabId) => ipcRenderer.invoke(IPC_CHANNELS.TAB_HIBERNATE, tabId),
   restoreTab: (tabId) => ipcRenderer.invoke(IPC_CHANNELS.TAB_RESTORE, tabId),
   setZoom: (tabId, zoomLevel) => ipcRenderer.invoke(IPC_CHANNELS.TAB_SET_ZOOM, tabId, zoomLevel),
+  setTabKeepAwake: (tabId, keepAwake) => ipcRenderer.invoke(IPC_CHANNELS.TAB_KEEP_AWAKE, tabId, keepAwake),
 
   // Workspaces
   listWorkspaces: () => ipcRenderer.invoke(IPC_CHANNELS.WORKSPACE_LIST),
@@ -120,6 +131,8 @@ const api: OrcaAPI = {
   optimizeNow: () => ipcRenderer.invoke(IPC_CHANNELS.MEMORY_OPTIMIZE_NOW),
   suspendAllEligible: () => ipcRenderer.invoke(IPC_CHANNELS.MEMORY_SUSPEND_ALL_ELIGIBLE),
   restoreAll: () => ipcRenderer.invoke(IPC_CHANNELS.MEMORY_RESTORE_ALL),
+  suspendWorkspace: (workspaceId) => ipcRenderer.invoke(IPC_CHANNELS.MEMORY_SUSPEND_WORKSPACE, workspaceId),
+  restoreWorkspace: (workspaceId) => ipcRenderer.invoke(IPC_CHANNELS.MEMORY_RESTORE_WORKSPACE, workspaceId),
 
   // Bookmarks
   getBookmarks: () => ipcRenderer.invoke(IPC_CHANNELS.BOOKMARK_GET_ALL),
@@ -143,6 +156,9 @@ const api: OrcaAPI = {
   // Settings
   getSettings: () => ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_GET),
   updateSettings: (settings) => ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_UPDATE, settings),
+
+  // Panel Overlay
+  setPanelOverlayState: (isOpen, panelName) => ipcRenderer.invoke(IPC_CHANNELS.PANEL_OVERLAY_STATE, isOpen, panelName),
 
   // Window Controls
   minimizeWindow: () => ipcRenderer.invoke(IPC_CHANNELS.WINDOW_MINIMIZE),

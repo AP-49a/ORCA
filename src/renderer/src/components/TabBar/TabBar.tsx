@@ -17,6 +17,7 @@ interface TabBarProps {
   onHibernateTab: (id: string) => void;
   onDuplicateTab: (id: string) => void;
   onRestoreTab: (id: string) => void;
+  onToggleKeepAwakeTab?: (id: string, keepAwake: boolean) => void;
   onOpenMemoryCenter: () => void;
 }
 
@@ -33,10 +34,11 @@ export const TabBar: React.FC<TabBarProps> = ({
   onHibernateTab,
   onDuplicateTab,
   onRestoreTab,
+  onToggleKeepAwakeTab,
   onOpenMemoryCenter,
 }) => {
   return (
-    <div className="select-none flex items-end h-10 bg-[var(--bg-secondary)] border-b border-[var(--border)] px-2"
+    <div className="select-none flex items-end h-10 bg-[var(--bg-secondary)] border-b border-[var(--border)] px-2 flex-shrink-0"
       style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
     >
         {/* Brand Logo */}
@@ -64,6 +66,7 @@ export const TabBar: React.FC<TabBarProps> = ({
               onHibernate={() => onHibernateTab(tab.id)}
               onDuplicate={() => onDuplicateTab(tab.id)}
               onRestore={() => onRestoreTab(tab.id)}
+              onToggleKeepAwake={() => onToggleKeepAwakeTab?.(tab.id, !tab.keepAwake)}
             />
           ))}
 

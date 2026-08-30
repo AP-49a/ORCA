@@ -93,7 +93,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
 
   return (
     <div
-      className="flex items-center h-11 px-3 bg-[var(--surface)] border-b border-[var(--border)] gap-2 z-20"
+      className="flex items-center h-11 px-3 bg-[var(--surface)] border-b border-[var(--border)] gap-2 z-20 flex-shrink-0"
       style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
     >
       {/* Navigation Buttons: Back, Forward, Reload */}

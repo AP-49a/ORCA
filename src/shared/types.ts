@@ -2,6 +2,10 @@ export type TabState = 'ACTIVE' | 'IDLE' | 'SUSPENDED' | 'HIBERNATED';
 
 export type OceanTier = 'SURFACE' | 'SHALLOW' | 'DEEP' | 'ABYSS';
 
+export type MemoryPressureLevel = 'low' | 'moderate' | 'high' | 'critical';
+
+export type SuspensionAggressiveness = 'conservative' | 'balanced' | 'aggressive';
+
 export interface Tab {
   id: string;
   url: string;
@@ -9,6 +13,7 @@ export interface Tab {
   favicon?: string | null;
   createdAt: number;
   lastAccessedAt: number;
+  lastInteractionAt?: number;
   state: TabState;
   workspaceId: string;
   pinned: boolean;
@@ -23,8 +28,11 @@ export interface Tab {
   audioActive?: boolean;
   suspensionProtected?: boolean;
   suspensionProtectionReason?: string;
+  keepAwake?: boolean;
   lastSuspendedAt?: number;
   lastHibernatedAt?: number;
+  suspendCount?: number;
+  restoreCount?: number;
 }
 
 export interface Workspace {
@@ -80,6 +88,34 @@ export interface MemoryPoint {
   timestamp: number;
   browserMB: number;
   systemUsedPercent: number;
+  activeTabCount?: number;
+  suspendedTabCount?: number;
+  suspensionEvent?: boolean;
+}
+
+export interface SuspensionCandidate {
+  tabId: string;
+  title: string;
+  url: string;
+  favicon?: string | null;
+  workspaceId: string;
+  workspaceName?: string;
+  inactiveForMs: number;
+  estimatedMemoryMB: number;
+  priority: number; // higher = more urgent to suspend
+  protected: boolean;
+  protectionReason?: string;
+}
+
+export interface WorkspaceMemorySummary {
+  workspaceId: string;
+  workspaceName: string;
+  activeTabs: number;
+  idleTabs: number;
+  suspendedTabs: number;
+  hibernatedTabs: number;
+  estimatedActiveMB: number;
+  estimatedSavedMB: number;
 }
 
 export interface MemoryStats {
@@ -98,17 +134,29 @@ export interface MemoryStats {
     hibernated: number;
   };
   memoryPressure: boolean;
+  pressureLevel: MemoryPressureLevel;
   pressureMessage?: string;
+  engineAction: string;
   eligibleToSuspendCount: number;
   potentialRecoveryMB: number;
+  suspensionCandidates: SuspensionCandidate[];
+  tabsByWorkspace: WorkspaceMemorySummary[];
   historyTimeline: MemoryPoint[];
+  // Lifetime stats (per-session)
+  lifetimeFreedMB: number;
+  lifetimeSuspendedCount: number;
 }
 
 export interface BrowserSettings {
   autoSuspend: boolean;
-  suspendTimeoutMinutes: number; // 15, 30, 60, 120, custom
+  suspendTimeoutMinutes: number;
+  suspendAggressiveness: SuspensionAggressiveness;
+  memoryPressureThresholdPercent: number; // 60 | 70 | 80 | 90
+  neverSuspendPinned: boolean;
+  neverSuspendMedia: boolean;
+  neverSuspendDownloads: boolean;
   autoHibernate: boolean;
-  hibernateTimeoutDays: number; // 1, 3, 7, 30
+  hibernateTimeoutDays: number;
   neverSuspendDomains: string[];
   neverHibernateDomains: string[];
   searchEngine: string;
@@ -125,3 +173,5 @@ export interface SessionData {
   activeTabId: string | null;
   settings: BrowserSettings;
 }
+
+

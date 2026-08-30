@@ -29,6 +29,11 @@ export function useBrowserStore() {
   const [settings, setSettings] = useState<BrowserSettings>({
     autoSuspend: true,
     suspendTimeoutMinutes: 15,
+    suspendAggressiveness: 'balanced',
+    memoryPressureThresholdPercent: 80,
+    neverSuspendPinned: true,
+    neverSuspendMedia: true,
+    neverSuspendDownloads: true,
     autoHibernate: true,
     hibernateTimeoutDays: 3,
     neverSuspendDomains: ['docs.google.com', 'sheets.google.com', 'github.com', 'figma.com'],
@@ -51,9 +56,15 @@ export function useBrowserStore() {
     estimatedSavingsMB: 0,
     tabsByState: { active: 1, idle: 0, suspended: 0, hibernated: 0 },
     memoryPressure: false,
+    pressureLevel: 'low',
+    engineAction: 'Monitoring',
     eligibleToSuspendCount: 0,
     potentialRecoveryMB: 0,
+    suspensionCandidates: [],
+    tabsByWorkspace: [],
     historyTimeline: [],
+    lifetimeFreedMB: 0,
+    lifetimeSuspendedCount: 0,
   });
 
   // Modal / View Controls
@@ -256,6 +267,26 @@ export function useBrowserStore() {
     setMemoryStats(updatedStats);
   };
 
+  const setTabKeepAwake = async (tabId: string, keepAwake: boolean) => {
+    if (!api) return;
+    await api.setTabKeepAwake(tabId, keepAwake);
+  };
+
+  const suspendWorkspace = async (workspaceId: string) => {
+    if (!api) return;
+    const res = await api.suspendWorkspace(workspaceId);
+    const updatedStats = await api.getMemoryStats();
+    setMemoryStats(updatedStats);
+    return res;
+  };
+
+  const restoreWorkspace = async (workspaceId: string) => {
+    if (!api) return;
+    await api.restoreWorkspace(workspaceId);
+    const updatedStats = await api.getMemoryStats();
+    setMemoryStats(updatedStats);
+  };
+
   // Bookmarks Operations
   const addBookmark = async (url: string, title: string, favicon?: string) => {
     if (!api) return;
@@ -349,6 +380,9 @@ export function useBrowserStore() {
     deleteWorkspace,
     optimizeNow,
     restoreAll,
+    setTabKeepAwake,
+    suspendWorkspace,
+    restoreWorkspace,
     addBookmark,
     removeBookmark,
     deleteHistoryItem,

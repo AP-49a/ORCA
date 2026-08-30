@@ -49,15 +49,58 @@ export class TabManager {
   private callbacks: TabManagerCallbacks;
   private contentBounds = { x: 0, y: 116, width: 1200, height: 684 };
   private readonly chromeHeight = 116;
+  private isPanelOverlayActive = false;
+  // Maps tabId -> renderer process PID for real memory correlation
+  private tabPidMap: Map<string, number> = new Map();
 
   constructor(callbacks: TabManagerCallbacks) {
     this.callbacks = callbacks;
+  }
+
+  /** Returns the tabId -> renderer PID map for memory estimation */
+  public getTabPidMap(): Map<string, number> {
+    return new Map(this.tabPidMap);
+  }
+
+  /** Set or clear the Keep Awake protection on a tab */
+  public async setKeepAwake(tabId: string, keepAwake: boolean): Promise<void> {
+    const tab = this.tabs.get(tabId);
+    if (!tab) return;
+    tab.keepAwake = keepAwake;
+    if (keepAwake) {
+      tab.suspensionProtected = true;
+      tab.suspensionProtectionReason = 'Keep Awake';
+    } else {
+      tab.suspensionProtected = false;
+      tab.suspensionProtectionReason = undefined;
+    }
+    this.notifyTabsUpdated();
   }
 
   private attachViewToWindow(view: any) {
     if (!this.window) {
       return;
     }
+
+    if (this.isPanelOverlayActive) {
+      return;
+    }
+
+    // Always synchronize contentBounds with current window dimensions
+    try {
+      if (!this.window.isDestroyed() && typeof (this.window as any).getContentSize === 'function') {
+        const [winWidth, winHeight] = (this.window as any).getContentSize();
+        if (winWidth > 0 && winHeight > 0) {
+          const contentHeight = Math.max(0, winHeight - this.chromeHeight);
+          this.contentBounds = {
+            x: 0,
+            y: this.chromeHeight,
+            width: winWidth,
+            height: contentHeight,
+          };
+        }
+      }
+    } catch {}
 
     try {
       if (this.window.contentView && typeof this.window.contentView.addChildView === 'function') {
@@ -117,7 +160,7 @@ export class TabManager {
       height: contentHeight,
     };
 
-    if (this.activeTabId) {
+    if (this.activeTabId && !this.isPanelOverlayActive) {
       const activeTab = this.tabs.get(this.activeTabId);
       if (activeTab && !activeTab.url.startsWith('orca://')) {
         const activeView = this.views.get(this.activeTabId);
@@ -125,6 +168,45 @@ export class TabManager {
           this.attachViewToWindow(activeView);
         }
       }
+    }
+  }
+
+  public async setPanelOverlayState(isOpen: boolean, panelName: string): Promise<string | null> {
+    this.isPanelOverlayActive = isOpen;
+    console.log(`[ORCA PANEL] panel: ${panelName}`);
+    console.log(`[ORCA PANEL] opened: ${isOpen}`);
+    console.log(`[ORCA PANEL] activeWebContentsView: ${this.activeTabId || 'none'}`);
+    console.log(`[ORCA PANEL] view hierarchy: [BrowserWindow.contentView -> WebContentsView(${this.activeTabId || 'none'})]`);
+    console.log(`[ORCA PANEL] bounds: x=${this.contentBounds.x} y=${this.contentBounds.y} width=${this.contentBounds.width} height=${this.contentBounds.height}`);
+
+    if (!this.activeTabId) return null;
+    const activeTab = this.tabs.get(this.activeTabId);
+    const activeView = this.views.get(this.activeTabId);
+
+    if (!activeView || !activeTab || activeTab.url.startsWith('orca://')) {
+      return null;
+    }
+
+    if (isOpen) {
+      let snapshotDataUrl: string | null = null;
+      try {
+        if (activeView.webContents && typeof activeView.webContents.capturePage === 'function') {
+          const image = await activeView.webContents.capturePage();
+          if (image && !image.isEmpty()) {
+            snapshotDataUrl = image.toDataURL();
+          }
+        }
+      } catch (err: any) {
+        console.warn('[TabManager] capturePage error:', err?.message || err);
+      }
+
+      this.detachViewFromWindow(activeView);
+      return snapshotDataUrl;
+    } else {
+      if (this.window) {
+        this.attachViewToWindow(activeView);
+      }
+      return null;
     }
   }
 
@@ -208,6 +290,15 @@ export class TabManager {
 
     this.views.set(tab.id, view);
     this.setupViewEvents(tab.id, view);
+
+    // Record renderer PID for real memory measurement
+    try {
+      const pid = view.webContents.getProcessId?.() ?? view.webContents.getOSProcessId?.();
+      if (pid) {
+        this.tabPidMap.set(tab.id, pid);
+        console.log(`[ORCA VIEW] renderer PID: ${pid} (tabId=${tab.id})`);
+      }
+    } catch {/* PID not available in fallback stub */}
 
     if (tab.url && !tab.url.startsWith('orca://')) {
       view.webContents.loadURL(tab.url).catch((err: any) => {
@@ -373,16 +464,25 @@ export class TabManager {
       try {
         // Capture zoom before closing
         tab.zoomLevel = view.webContents.getZoomLevel();
+        // Store memory estimate before destroying
+        try {
+          const pid = view.webContents.getProcessId?.() ?? view.webContents.getOSProcessId?.();
+          if (pid && tab.actualMemoryMB === undefined) {
+            // leave actualMemoryMB as-is for savings tracking
+          }
+        } catch {}
         // Destroy WebContents to release OS RAM
         (view.webContents as any).close();
       } catch (err) {
         console.warn(`Error closing WebContents for tab ${tabId}:`, err);
       }
       this.views.delete(tabId);
+      this.tabPidMap.delete(tabId);
     }
 
     tab.state = 'SUSPENDED';
     tab.lastSuspendedAt = Date.now();
+    tab.suspendCount = (tab.suspendCount ?? 0) + 1;
     this.callbacks.onTabStateChanged(tabId, 'SUSPENDED');
     this.notifyTabsUpdated();
   }
@@ -416,6 +516,7 @@ export class TabManager {
     tab.state = 'ACTIVE';
     tab.lastAccessedAt = Date.now();
     tab.loading = true;
+    tab.restoreCount = (tab.restoreCount ?? 0) + 1;
 
     if (!tab.url.startsWith('orca://')) {
       let view = this.views.get(tabId);

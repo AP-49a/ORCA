@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Copy,
   Zap,
+  Shield,
 } from 'lucide-react';
 
 interface TabItemProps {
@@ -25,6 +26,7 @@ interface TabItemProps {
   onHibernate: () => void;
   onDuplicate: () => void;
   onRestore: () => void;
+  onToggleKeepAwake?: () => void;
 }
 
 export const TabItem: React.FC<TabItemProps> = ({
@@ -38,6 +40,7 @@ export const TabItem: React.FC<TabItemProps> = ({
   onHibernate,
   onDuplicate,
   onRestore,
+  onToggleKeepAwake,
 }) => {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
@@ -151,6 +154,13 @@ export const TabItem: React.FC<TabItemProps> = ({
           </button>
         )}
 
+        {/* Keep Awake indicator */}
+        {tab.keepAwake && (
+          <span title="Keep Awake (Protected from Auto-Suspension)" className="flex items-center">
+            <Shield className="w-2.5 h-2.5 text-amber-400 flex-shrink-0 ml-1" />
+          </span>
+        )}
+
         {/* Pin icon */}
         {tab.pinned && (
           <Pin className="w-2.5 h-2.5 text-[var(--text-muted)]" />
@@ -185,8 +195,8 @@ export const TabItem: React.FC<TabItemProps> = ({
             }}
           />
           <div
-            className="fixed z-50 bg-[var(--surface)] rounded-xl shadow-[var(--modal-shadow)] border border-[var(--border)] py-1.5 min-w-[180px] text-xs font-medium text-[var(--text-primary)] animate-scale-in"
-            style={{ left: Math.min(contextMenu.x, window.innerWidth - 190), top: contextMenu.y + 4 }}
+            className="fixed z-50 bg-[var(--surface)] rounded-xl shadow-[var(--modal-shadow)] border border-[var(--border)] py-1.5 min-w-[190px] text-xs font-medium text-[var(--text-primary)] animate-scale-in"
+            style={{ left: Math.min(contextMenu.x, window.innerWidth - 200), top: contextMenu.y + 4 }}
           >
             {tab.state === 'SUSPENDED' || tab.state === 'HIBERNATED' ? (
               <button
@@ -231,6 +241,21 @@ export const TabItem: React.FC<TabItemProps> = ({
             )}
 
             <div className="h-px bg-[var(--border-subtle)] my-1" />
+
+            {onToggleKeepAwake && (
+              <button
+                onClick={() => {
+                  onToggleKeepAwake();
+                  closeContextMenu();
+                }}
+                className={`w-full px-3 py-1.5 text-left flex items-center space-x-2 hover:bg-[var(--surface-hover)] ${
+                  tab.keepAwake ? 'text-amber-400 font-semibold' : 'text-[var(--text-primary)]'
+                }`}
+              >
+                <Shield className="w-3.5 h-3.5" />
+                <span>{tab.keepAwake ? 'Allow Auto-Suspend' : 'Keep Awake'}</span>
+              </button>
+            )}
 
             <button
               onClick={() => {

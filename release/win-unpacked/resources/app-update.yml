@@ -1,0 +1,4 @@
+owner: AP-49a
+repo: ORCA
+provider: github
+updaterCacheDirName: orca-browser-updater

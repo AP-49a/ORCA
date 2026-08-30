@@ -86,7 +86,41 @@ export function runMemoryEngineTests() {
   const res5 = SuspensionRules.canSuspend(pinnedTab, 'tab-1', settings);
   assert(!res5.eligible, 'Pinned tab is protected from suspension');
 
-  // Test 6: URL Navigation normalizer
+  // Test 6: Keep Awake tab is protected
+  const keepAwakeTab: Tab = {
+    ...inactiveTab,
+    id: 'tab-6',
+    keepAwake: true,
+  };
+  const res6 = SuspensionRules.canSuspend(keepAwakeTab, 'tab-1', settings);
+  assert(!res6.eligible, 'Keep Awake tab is protected from suspension');
+
+  // Test 7: Aggressive mode (5m timeout)
+  const aggressiveSettings: BrowserSettings = {
+    ...settings,
+    suspendAggressiveness: 'aggressive',
+    suspendTimeoutMinutes: 5,
+  };
+  const sixMinTab: Tab = {
+    ...activeTab,
+    id: 'tab-7',
+    lastAccessedAt: now - (6 * 60 * 1000), // 6m ago
+  };
+  const res7 = SuspensionRules.canSuspend(sixMinTab, 'tab-1', aggressiveSettings);
+  assert(res7.eligible, 'Aggressive mode suspends tabs inactive for >5 min');
+
+  // Test 8: Memory pressure acceleration
+  const eightMinTab: Tab = {
+    ...activeTab,
+    id: 'tab-8',
+    lastAccessedAt: now - (8 * 60 * 1000), // 8m ago (less than normal 15m)
+  };
+  const res8Normal = SuspensionRules.canSuspend(eightMinTab, 'tab-1', settings, false);
+  const res8Pressure = SuspensionRules.canSuspend(eightMinTab, 'tab-1', settings, true);
+  assert(!res8Normal.eligible, '8m tab is not eligible under normal conditions');
+  assert(res8Pressure.eligible, '8m tab becomes eligible under memory pressure acceleration');
+
+  // Test 9: URL Navigation normalizer
   const url1 = NavigationManager.normalizeInput('github.com', settings.searchEngine);
   assert(url1 === 'https://github.com', 'Domain input "github.com" normalized to "https://github.com"');
 

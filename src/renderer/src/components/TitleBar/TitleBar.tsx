@@ -22,7 +22,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({
 
   return (
     <header
-      className="flex items-center justify-between h-8 bg-[var(--surface)] border-b border-[var(--border)] px-3 select-none text-xs text-[var(--text-secondary)] font-medium z-30"
+      className="flex items-center justify-between h-8 bg-[var(--surface)] border-b border-[var(--border)] px-3 select-none text-xs text-[var(--text-secondary)] font-medium z-30 flex-shrink-0"
       style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
       onDoubleClick={handleToggleMaximize}
     >

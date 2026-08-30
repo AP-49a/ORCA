@@ -16,6 +16,7 @@ export const IPC_CHANNELS = {
   TAB_HIBERNATE: 'tab:hibernate',
   TAB_RESTORE: 'tab:restore',
   TAB_SET_ZOOM: 'tab:set-zoom',
+  TAB_KEEP_AWAKE: 'tab:keep-awake',
   
   // Workspaces
   WORKSPACE_LIST: 'workspace:list',
@@ -29,6 +30,8 @@ export const IPC_CHANNELS = {
   MEMORY_OPTIMIZE_NOW: 'memory:optimize-now',
   MEMORY_SUSPEND_ALL_ELIGIBLE: 'memory:suspend-all-eligible',
   MEMORY_RESTORE_ALL: 'memory:restore-all',
+  MEMORY_SUSPEND_WORKSPACE: 'memory:suspend-workspace',
+  MEMORY_RESTORE_WORKSPACE: 'memory:restore-workspace',
   
   // Bookmarks
   BOOKMARK_GET_ALL: 'bookmark:get-all',
@@ -52,6 +55,9 @@ export const IPC_CHANNELS = {
   // Settings
   SETTINGS_GET: 'settings:get',
   SETTINGS_UPDATE: 'settings:update',
+
+  // Panel Overlay
+  PANEL_OVERLAY_STATE: 'panel:overlay-state',
 
   // Window Controls
   WINDOW_MINIMIZE: 'window:minimize',

@@ -81,6 +81,10 @@ export function registerIpcHandlers(
     return tabManager.setZoom(tabId, zoomLevel);
   });
 
+  ipcMain.handle(IPC_CHANNELS.TAB_KEEP_AWAKE, async (_, tabId: string, keepAwake: boolean) => {
+    return tabManager.setKeepAwake(tabId, keepAwake);
+  });
+
   // --- Workspaces ---
   ipcMain.handle(IPC_CHANNELS.WORKSPACE_LIST, async () => {
     return storageManager.getWorkspaces();
@@ -229,6 +233,20 @@ export function registerIpcHandlers(
     const updated = { ...current, ...newSettings };
     storageManager.saveSettings(updated);
     return updated;
+  });
+
+  // --- Panel Overlay ---
+  ipcMain.handle(IPC_CHANNELS.PANEL_OVERLAY_STATE, async (_, isOpen: boolean, panelName: string) => {
+    return tabManager.setPanelOverlayState(isOpen, panelName);
+  });
+
+  // --- Workspace Memory ---
+  ipcMain.handle(IPC_CHANNELS.MEMORY_SUSPEND_WORKSPACE, async (_, workspaceId: string) => {
+    return memoryManager.suspendWorkspace(workspaceId);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.MEMORY_RESTORE_WORKSPACE, async (_, workspaceId: string) => {
+    return memoryManager.restoreWorkspace(workspaceId);
   });
 
   // --- Window Controls ---

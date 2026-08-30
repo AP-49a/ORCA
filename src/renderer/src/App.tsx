@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useBrowserStore } from './store/useBrowserStore';
 import { TitleBar } from './components/TitleBar/TitleBar';
 import { TabBar } from './components/TabBar/TabBar';
@@ -49,6 +49,43 @@ export const App: React.FC = () => {
     }
   }, [store.settings.theme]);
 
+  const isAnyModalOpen =
+    store.isDownloadsOpen ||
+    store.isBookmarksOpen ||
+    store.isHistoryOpen ||
+    store.isSettingsOpen ||
+    store.isMemoryCenterOpen ||
+    store.isTabLibraryOpen;
+
+  const activeModalName = store.isDownloadsOpen
+    ? 'Downloads'
+    : store.isBookmarksOpen
+    ? 'Bookmarks'
+    : store.isHistoryOpen
+    ? 'History'
+    : store.isSettingsOpen
+    ? 'Settings'
+    : store.isMemoryCenterOpen
+    ? 'MemoryCenter'
+    : store.isTabLibraryOpen
+    ? 'TabLibrary'
+    : '';
+
+  const [panelSnapshot, setPanelSnapshot] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isAnyModalOpen) {
+      window.orcaAPI?.setPanelOverlayState(true, activeModalName).then((snapshot) => {
+        if (snapshot) {
+          setPanelSnapshot(snapshot);
+        }
+      });
+    } else {
+      window.orcaAPI?.setPanelOverlayState(false, 'none');
+      setPanelSnapshot(null);
+    }
+  }, [isAnyModalOpen]);
+
   const handleToggleBookmark = () => {
     if (!store.activeTab) return;
     const isBookmarked = store.bookmarks.some((b) => b.url === store.activeTab?.url);
@@ -89,6 +126,7 @@ export const App: React.FC = () => {
         onHibernateTab={store.hibernateTab}
         onDuplicateTab={store.duplicateTab}
         onRestoreTab={store.restoreTab}
+        onToggleKeepAwakeTab={store.setTabKeepAwake}
         onOpenMemoryCenter={() => store.setIsMemoryCenterOpen(true)}
       />
 
@@ -141,7 +179,17 @@ export const App: React.FC = () => {
             onSwitchWorkspace={store.switchWorkspace}
             onOpenMemoryCenter={() => store.setIsMemoryCenterOpen(true)}
           />
-        ) : null}
+        ) : (
+          <div className="w-full h-full relative overflow-hidden bg-[var(--bg-primary)]">
+            {panelSnapshot && (
+              <img
+                src={panelSnapshot}
+                alt=""
+                className="w-full h-full object-cover select-none pointer-events-none"
+              />
+            )}
+          </div>
+        )}
       </main>
 
       {/* 4. MODALS & OVERLAYS */}
@@ -151,6 +199,10 @@ export const App: React.FC = () => {
         onClose={() => store.setIsMemoryCenterOpen(false)}
         onOptimizeNow={store.optimizeNow}
         onRestoreAll={store.restoreAll}
+        onSuspendTab={store.suspendTab}
+        onRestoreTab={store.restoreTab}
+        onSuspendWorkspace={store.suspendWorkspace}
+        onRestoreWorkspace={store.restoreWorkspace}
         onOpenTabLibrary={() => {
           store.setIsMemoryCenterOpen(false);
           store.setIsTabLibraryOpen(true);

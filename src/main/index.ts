@@ -8,6 +8,10 @@ import { registerIpcHandlers } from './ipc/IpcHandlers';
 import { IPC_CHANNELS } from './ipc/IpcChannels';
 import { Tab, TabState, MemoryStats, DownloadItem } from '../shared/types';
 
+// Set Windows AppUserModelID immediately at process startup for taskbar grouping
+if (process.platform === 'win32') {
+  app.setAppUserModelId('com.orca.browser');
+}
 
 let storageManager: StorageManager;
 let tabManager: TabManager;
@@ -23,6 +27,9 @@ function sendToRenderer(channel: string, ...args: any[]) {
 }
 
 async function initializeApp() {
+  if (process.platform === 'win32') {
+    app.setAppUserModelId('com.orca.browser');
+  }
   storageManager = new StorageManager();
   const settings = storageManager.getSettings();
 
@@ -66,6 +73,8 @@ async function initializeApp() {
     getTabs: () => tabManager.getTabs(),
     getActiveTabId: () => tabManager.getActiveTabId(),
     getSettings: () => storageManager.getSettings(),
+    getWorkspaces: () => storageManager.getWorkspaces(),
+    getTabPidMap: () => tabManager.getTabPidMap(),
     suspendTab: async (id: string) => tabManager.suspendTab(id),
     hibernateTab: async (id: string) => tabManager.hibernateTab(id),
     restoreTab: async (id: string) => tabManager.restoreTab(id),

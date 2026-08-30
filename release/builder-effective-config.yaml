@@ -1,0 +1,30 @@
+directories:
+  output: release
+  buildResources: build
+appId: com.orca.browser
+productName: ORCA
+files:
+  - filter:
+      - dist/**/*
+      - dist-electron/**/*
+      - assets/**/*
+      - package.json
+extraResources:
+  - from: assets
+    to: assets
+win:
+  icon: assets/orca.ico
+  executableName: ORCA
+  target:
+    - nsis
+    - portable
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: assets/orca.ico
+  uninstallerIcon: assets/orca.ico
+  installerHeaderIcon: assets/orca.ico
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: ORCA
+electronVersion: 33.4.11
