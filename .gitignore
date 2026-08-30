@@ -1,0 +1,117 @@
+# ================================
+# Dependencies
+# ================================
+node_modules/
+
+# ================================
+# Build output
+# ================================
+dist/
+dist-electron/
+out/
+build/
+
+# ================================
+# Environment / Secrets
+# ================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Keep example env files
+!.env.example
+
+# ================================
+# Logs
+# ================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ================================
+# Electron / Runtime data
+# ================================
+*.pid
+*.seed
+*.pid.lock
+
+# ================================
+# Test / Coverage
+# ================================
+coverage/
+.nyc_output/
+
+# ================================
+# Vite
+# ================================
+.vite/
+
+# ================================
+# TypeScript
+# ================================
+*.tsbuildinfo
+
+# ================================
+# VS Code
+# ================================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# ================================
+# Antigravity / AI tool files
+# ================================
+.gemini/
+.antigravity/
+scratch/
+
+# ================================
+# OS files
+# ================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ================================
+# Temporary files
+# ================================
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# ================================
+# Electron generated / local data
+# ================================
+electron-data/
+user-data/
+sessions/
+
+# ================================
+# Local databases
+# ================================
+*.sqlite
+*.sqlite3
+*.db
+
+# ================================
+# Certificates / private keys
+# ================================
+*.pem
+*.key
+*.p12
+*.pfx
+
+# ================================
+# Optional: generated installers
+# ================================
+*.exe
+*.msi
+*.dmg
+*.app
+*.deb
+*.rpm

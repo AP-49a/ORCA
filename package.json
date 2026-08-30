@@ -1,0 +1,47 @@
+{
+  "name": "orca-browser",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "ORCA - More tabs. Less memory.",
+  "main": "dist-electron/main/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:ts": "tsc -b",
+    "test": "npx tsx tests/memoryEngine.test.ts",
+    "preview": "vite preview",
+    "start": "electron ."
+  },
+  "keywords": [
+    "browser",
+    "electron",
+    "react",
+    "tabs",
+    "memory-management"
+  ],
+  "author": "ORCA Team",
+  "license": "ISC",
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.16.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vite-plugin-electron": "^0.29.0",
+    "vite-plugin-electron-renderer": "^0.14.6"
+  }
+}
