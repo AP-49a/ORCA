@@ -53,8 +53,8 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
             onClick={() => onSwitchWorkspace(ws.id)}
             className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
               isActive
-                ? 'bg-sky-100 text-sky-900 shadow-xs border border-sky-200'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800'
+                ? 'bg-[var(--accent-subtle)] text-[var(--accent)] shadow-xs border border-[var(--accent-border)]'
+                : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]'
             }`}
             title={`Switch to ${ws.name} Workspace`}
           >
@@ -65,22 +65,22 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
       })}
 
       {isCreating ? (
-        <form onSubmit={handleCreate} className="flex items-center space-x-1 bg-white border border-slate-300 rounded-md px-2 py-0.5 shadow-xs">
+        <form onSubmit={handleCreate} className="flex items-center space-x-1 bg-[var(--surface)] border border-[var(--border)] rounded-md px-2 py-0.5 shadow-xs">
           <input
             type="text"
             placeholder="Workspace name..."
             value={newWsName}
             onChange={(e) => setNewWsName(e.target.value)}
-            className="text-xs text-slate-800 bg-transparent outline-none w-28 py-0.5"
+            className="text-xs text-[var(--text-primary)] bg-transparent outline-none w-28 py-0.5"
             autoFocus
           />
-          <button type="submit" className="p-0.5 text-emerald-600 hover:text-emerald-800">
+          <button type="submit" className="p-0.5 text-emerald-500 hover:opacity-80">
             <Check className="w-3 h-3" />
           </button>
           <button
             type="button"
             onClick={() => setIsCreating(false)}
-            className="p-0.5 text-slate-400 hover:text-slate-600"
+            className="p-0.5 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
           >
             <X className="w-3 h-3" />
           </button>
@@ -88,7 +88,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
       ) : (
         <button
           onClick={() => setIsCreating(true)}
-          className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          className="p-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition-colors"
           title="New Workspace"
         >
           <Plus className="w-3.5 h-3.5" />

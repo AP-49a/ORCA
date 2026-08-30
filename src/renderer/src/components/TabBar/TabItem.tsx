@@ -93,8 +93,8 @@ export const TabItem: React.FC<TabItemProps> = ({
           tab.pinned ? 'w-10 justify-center px-2' : 'max-w-[210px] min-w-[120px] flex-1 px-2.5'
         } ${
           isActive
-            ? 'bg-white text-slate-800 border-slate-200 shadow-sm z-10'
-            : 'bg-slate-100/70 hover:bg-white/80 text-slate-600 border-transparent hover:border-slate-200'
+            ? 'bg-[var(--surface)] text-[var(--text-primary)] border-[var(--border)] border-b-transparent shadow-xs z-10'
+            : 'bg-[var(--surface-subtle)]/70 hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] border-transparent hover:border-[var(--border)]'
         } ${
           tab.state === 'SUSPENDED' || tab.state === 'HIBERNATED' ? 'opacity-90' : ''
         }`}
@@ -108,7 +108,7 @@ export const TabItem: React.FC<TabItemProps> = ({
         {/* Tab Favicon or Globe */}
         <div className="flex-shrink-0 mr-2 flex items-center justify-center w-3.5 h-3.5">
           {tab.loading ? (
-            <RefreshCw className="w-3 h-3 text-sky-500 animate-spin" />
+            <RefreshCw className="w-3 h-3 text-[var(--accent)] animate-spin" />
           ) : tab.favicon ? (
             <img
               src={tab.favicon}
@@ -120,7 +120,7 @@ export const TabItem: React.FC<TabItemProps> = ({
               }}
             />
           ) : (
-            <Globe className="w-3 h-3 text-slate-400" />
+            <Globe className="w-3 h-3 text-[var(--text-muted)]" />
           )}
         </div>
 
@@ -129,7 +129,7 @@ export const TabItem: React.FC<TabItemProps> = ({
           <span
             className={`truncate flex-1 font-medium ${
               tab.state === 'SUSPENDED' || tab.state === 'HIBERNATED'
-                ? 'text-slate-500 italic'
+                ? 'text-[var(--text-muted)] italic'
                 : ''
             }`}
           >
@@ -144,7 +144,7 @@ export const TabItem: React.FC<TabItemProps> = ({
               e.stopPropagation();
               onToggleMute();
             }}
-            className="flex-shrink-0 p-0.5 ml-1 text-sky-600 hover:text-sky-800 rounded"
+            className="flex-shrink-0 p-0.5 ml-1 text-[var(--accent)] hover:opacity-80 rounded"
             title={tab.muted ? 'Unmute' : 'Mute tab'}
           >
             {tab.muted ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3 animate-pulse" />}
@@ -153,7 +153,7 @@ export const TabItem: React.FC<TabItemProps> = ({
 
         {/* Pin icon */}
         {tab.pinned && (
-          <Pin className="w-2.5 h-2.5 text-slate-400" />
+          <Pin className="w-2.5 h-2.5 text-[var(--text-muted)]" />
         )}
 
         {/* Close Button */}
@@ -163,7 +163,7 @@ export const TabItem: React.FC<TabItemProps> = ({
               e.stopPropagation();
               onClose(e);
             }}
-            className={`flex-shrink-0 ml-1.5 p-0.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-opacity ${
+            className={`flex-shrink-0 ml-1.5 p-0.5 rounded-full hover:bg-[var(--surface-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-opacity ${
               isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
             }`}
             title="Close Tab (Ctrl+W)"
@@ -185,7 +185,7 @@ export const TabItem: React.FC<TabItemProps> = ({
             }}
           />
           <div
-            className="fixed z-50 bg-white/95 backdrop-blur-md rounded-xl shadow-orca-lg border border-slate-200 py-1.5 min-w-[180px] text-xs font-medium text-slate-700 animate-scale-in"
+            className="fixed z-50 bg-[var(--surface)] rounded-xl shadow-[var(--modal-shadow)] border border-[var(--border)] py-1.5 min-w-[180px] text-xs font-medium text-[var(--text-primary)] animate-scale-in"
             style={{ left: Math.min(contextMenu.x, window.innerWidth - 190), top: contextMenu.y + 4 }}
           >
             {tab.state === 'SUSPENDED' || tab.state === 'HIBERNATED' ? (
@@ -194,9 +194,9 @@ export const TabItem: React.FC<TabItemProps> = ({
                   onRestore();
                   closeContextMenu();
                 }}
-                className="w-full px-3 py-1.5 text-left flex items-center space-x-2 hover:bg-sky-50 text-sky-700"
+                className="w-full px-3 py-1.5 text-left flex items-center space-x-2 hover:bg-[var(--accent-subtle)] text-[var(--accent)]"
               >
-                <Sparkles className="w-3.5 h-3.5 text-sky-500" />
+                <Sparkles className="w-3.5 h-3.5 text-[var(--accent)]" />
                 <span>Restore Tab (Surface)</span>
               </button>
             ) : (
@@ -208,10 +208,10 @@ export const TabItem: React.FC<TabItemProps> = ({
                   }}
                   disabled={isActive}
                   className={`w-full px-3 py-1.5 text-left flex items-center space-x-2 ${
-                    isActive ? 'opacity-40 cursor-not-allowed' : 'hover:bg-indigo-50 text-indigo-700'
+                    isActive ? 'opacity-40 cursor-not-allowed' : 'hover:bg-[var(--surface-hover)] text-indigo-400'
                   }`}
                 >
-                  <Waves className="w-3.5 h-3.5 text-indigo-500" />
+                  <Waves className="w-3.5 h-3.5 text-indigo-400" />
                   <span>Suspend Tab (Deep)</span>
                 </button>
                 <button
@@ -221,25 +221,25 @@ export const TabItem: React.FC<TabItemProps> = ({
                   }}
                   disabled={isActive}
                   className={`w-full px-3 py-1.5 text-left flex items-center space-x-2 ${
-                    isActive ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-100 text-slate-700'
+                    isActive ? 'opacity-40 cursor-not-allowed' : 'hover:bg-[var(--surface-hover)] text-[var(--text-secondary)]'
                   }`}
                 >
-                  <Moon className="w-3.5 h-3.5 text-slate-500" />
+                  <Moon className="w-3.5 h-3.5 text-[var(--text-muted)]" />
                   <span>Hibernate Tab (Abyss)</span>
                 </button>
               </>
             )}
 
-            <div className="h-px bg-slate-100 my-1" />
+            <div className="h-px bg-[var(--border-subtle)] my-1" />
 
             <button
               onClick={() => {
                 onTogglePin();
                 closeContextMenu();
               }}
-              className="w-full px-3 py-1.5 text-left flex items-center space-x-2 hover:bg-slate-50"
+              className="w-full px-3 py-1.5 text-left flex items-center space-x-2 hover:bg-[var(--surface-hover)] text-[var(--text-primary)]"
             >
-              <Pin className="w-3.5 h-3.5 text-slate-500" />
+              <Pin className="w-3.5 h-3.5 text-[var(--text-muted)]" />
               <span>{tab.pinned ? 'Unpin Tab' : 'Pin Tab'}</span>
             </button>
 
@@ -248,20 +248,20 @@ export const TabItem: React.FC<TabItemProps> = ({
                 onDuplicate();
                 closeContextMenu();
               }}
-              className="w-full px-3 py-1.5 text-left flex items-center space-x-2 hover:bg-slate-50"
+              className="w-full px-3 py-1.5 text-left flex items-center space-x-2 hover:bg-[var(--surface-hover)] text-[var(--text-primary)]"
             >
-              <Copy className="w-3.5 h-3.5 text-slate-500" />
+              <Copy className="w-3.5 h-3.5 text-[var(--text-muted)]" />
               <span>Duplicate Tab</span>
             </button>
 
-            <div className="h-px bg-slate-100 my-1" />
+            <div className="h-px bg-[var(--border-subtle)] my-1" />
 
             <button
               onClick={(e) => {
                 onClose(e);
                 closeContextMenu();
               }}
-              className="w-full px-3 py-1.5 text-left flex items-center space-x-2 hover:bg-rose-50 text-rose-600"
+              className="w-full px-3 py-1.5 text-left flex items-center space-x-2 hover:bg-rose-500/10 text-rose-500"
             >
               <X className="w-3.5 h-3.5" />
               <span>Close Tab</span>

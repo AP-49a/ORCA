@@ -36,13 +36,13 @@ export const TabBar: React.FC<TabBarProps> = ({
   onOpenMemoryCenter,
 }) => {
   return (
-    <div className="select-none flex items-end h-10 bg-slate-100/90 border-b border-slate-200 px-2"
+    <div className="select-none flex items-end h-10 bg-[var(--bg-secondary)] border-b border-[var(--border)] px-2"
       style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
     >
         {/* Brand Logo */}
         <div className="flex items-center space-x-2 mr-3 mb-1 px-1 cursor-default">
           <OrcaLogo className="w-5 h-5 flex-shrink-0" />
-          <span className="font-bold text-xs tracking-wider text-slate-800 uppercase">
+          <span className="font-bold text-xs tracking-wider text-[var(--text-primary)] uppercase">
             Orca
           </span>
         </div>
@@ -70,7 +70,7 @@ export const TabBar: React.FC<TabBarProps> = ({
           {/* New Tab Button */}
           <button
             onClick={onCreateTab}
-            className="flex items-center justify-center w-7 h-7 mb-0.5 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors flex-shrink-0"
+            className="flex items-center justify-center w-7 h-7 mb-0.5 rounded-lg hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex-shrink-0"
             title="New Tab (Ctrl+T)"
           >
             <Plus className="w-4 h-4" />
@@ -86,17 +86,17 @@ export const TabBar: React.FC<TabBarProps> = ({
             style={{ WebkitAppRegion: 'no-drag', pointerEvents: 'auto' } as React.CSSProperties}
             className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
               memoryStats.memoryPressure
-                ? 'bg-amber-100 text-amber-800 border border-amber-300 animate-pulse'
+                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse'
                 : memoryStats.estimatedSavingsMB > 0
-                ? 'bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200'
-                : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200'
+                ? 'bg-[var(--accent-subtle)] hover:bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent-border)]'
+                : 'bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] border border-[var(--border)]'
             }`}
             title="Open Memory Center"
           >
-            <Waves className="w-3.5 h-3.5 text-sky-500" />
+            <Waves className="w-3.5 h-3.5 text-[var(--accent)]" />
             <span className="font-mono text-[11px]">{memoryStats.browserTotalMB} MB</span>
             {memoryStats.estimatedSavingsMB > 0 && (
-              <span className="text-[10px] text-emerald-600 font-medium ml-1">
+              <span className="text-[10px] text-emerald-500 font-medium ml-1">
                 (-{memoryStats.estimatedSavingsMB} MB)
               </span>
             )}

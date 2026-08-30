@@ -28,6 +28,27 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  useEffect(() => {
+    const theme = store.settings.theme;
+    const applyTheme = (isDark: boolean) => {
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    };
+
+    if (theme === 'dark') {
+      applyTheme(true);
+    } else if (theme === 'light' || theme === 'ocean') {
+      applyTheme(false);
+    } else {
+      // 'system'
+      const mql = window.matchMedia('(prefers-color-scheme: dark)');
+      applyTheme(mql.matches);
+
+      const handleChange = (e: MediaQueryListEvent) => applyTheme(e.matches);
+      mql.addEventListener('change', handleChange);
+      return () => mql.removeEventListener('change', handleChange);
+    }
+  }, [store.settings.theme]);
+
   const handleToggleBookmark = () => {
     if (!store.activeTab) return;
     const isBookmarked = store.bookmarks.some((b) => b.url === store.activeTab?.url);
@@ -46,7 +67,7 @@ export const App: React.FC = () => {
   const isInternalNewTab = !store.activeTab || store.activeTab.url === 'orca://newtab';
 
   return (
-    <div className="flex flex-col w-screen h-screen overflow-hidden bg-slate-50">
+    <div className="flex flex-col w-screen h-screen overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
       {/* 0. CUSTOM TITLE BAR */}
       <TitleBar
         onMinimize={store.minimizeWindow}

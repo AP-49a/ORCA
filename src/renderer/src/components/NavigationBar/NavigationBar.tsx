@@ -93,7 +93,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
 
   return (
     <div
-      className="flex items-center h-11 px-3 bg-white border-b border-slate-200 gap-2 z-20"
+      className="flex items-center h-11 px-3 bg-[var(--surface)] border-b border-[var(--border)] gap-2 z-20"
       style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
     >
       {/* Navigation Buttons: Back, Forward, Reload */}
@@ -103,8 +103,8 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
           disabled={!activeTab?.canGoBack}
           className={`p-1.5 rounded-lg transition-colors ${
             activeTab?.canGoBack
-              ? 'hover:bg-slate-100 text-slate-700'
-              : 'text-slate-300 cursor-not-allowed'
+              ? 'hover:bg-[var(--surface-hover)] text-[var(--text-primary)]'
+              : 'text-[var(--text-muted)] opacity-40 cursor-not-allowed'
           }`}
           title="Back (Alt+Left)"
         >
@@ -115,8 +115,8 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
           disabled={!activeTab?.canGoForward}
           className={`p-1.5 rounded-lg transition-colors ${
             activeTab?.canGoForward
-              ? 'hover:bg-slate-100 text-slate-700'
-              : 'text-slate-300 cursor-not-allowed'
+              ? 'hover:bg-[var(--surface-hover)] text-[var(--text-primary)]'
+              : 'text-[var(--text-muted)] opacity-40 cursor-not-allowed'
           }`}
           title="Forward (Alt+Right)"
         >
@@ -124,11 +124,11 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
         </button>
         <button
           onClick={activeTab?.loading ? onStop : onReload}
-          className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-700 transition-colors"
+          className="p-1.5 rounded-lg hover:bg-[var(--surface-hover)] text-[var(--text-primary)] transition-colors"
           title={activeTab?.loading ? 'Stop loading (Esc)' : 'Reload (Ctrl+R)'}
         >
           {activeTab?.loading ? (
-            <X className="w-4 h-4 text-slate-500" />
+            <X className="w-4 h-4 text-[var(--text-secondary)]" />
           ) : (
             <RotateCw className="w-4 h-4" />
           )}
@@ -139,18 +139,18 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
       <div
         className={`flex items-center flex-1 h-8 px-3 rounded-full border transition-all duration-200 ${
           isFocused
-            ? 'bg-white border-sky-400 ring-2 ring-sky-100 shadow-sm'
-            : 'bg-slate-100/80 hover:bg-slate-100 border-slate-200/80 text-slate-700'
+            ? 'bg-[var(--surface)] border-[var(--accent)] ring-2 ring-[var(--accent-border)] shadow-sm'
+            : 'bg-[var(--surface-subtle)] hover:bg-[var(--surface-hover)] border-[var(--border)] text-[var(--text-primary)]'
         }`}
       >
         {/* Security / Protocol Icon */}
         <div className="flex-shrink-0 mr-2 flex items-center">
           {activeTab?.url.startsWith('orca://') ? (
-            <Globe className="w-3.5 h-3.5 text-sky-500" />
+            <Globe className="w-3.5 h-3.5 text-[var(--accent)]" />
           ) : isHttps ? (
-            <Lock className="w-3.5 h-3.5 text-emerald-600" />
+            <Lock className="w-3.5 h-3.5 text-emerald-500" />
           ) : (
-            <Search className="w-3.5 h-3.5 text-slate-400" />
+            <Search className="w-3.5 h-3.5 text-[var(--text-muted)]" />
           )}
         </div>
 
@@ -167,27 +167,27 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
           }}
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
-          className="flex-1 bg-transparent text-xs font-normal text-slate-800 placeholder-slate-400 outline-none select-text"
+          className="flex-1 bg-transparent text-xs font-normal text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none select-text"
         />
 
         {/* Bookmark star */}
         <button
           onClick={onToggleBookmark}
-          className="flex-shrink-0 p-1 rounded hover:bg-slate-200/60 transition-colors ml-1"
+          className="flex-shrink-0 p-1 rounded hover:bg-[var(--surface-hover)] transition-colors ml-1"
           title={isBookmarked ? 'Remove Bookmark' : 'Bookmark this Tab'}
         >
           <Star
             className={`w-3.5 h-3.5 ${
               isBookmarked
                 ? 'text-amber-500 fill-amber-500'
-                : 'text-slate-400 hover:text-amber-500'
+                : 'text-[var(--text-muted)] hover:text-amber-500'
             }`}
           />
         </button>
       </div>
 
       {/* Workspace Switcher */}
-      <div className="hidden lg:flex items-center px-1 border-r border-slate-200">
+      <div className="hidden lg:flex items-center px-1 border-r border-[var(--border)]">
         <WorkspaceSelector
           workspaces={workspaces}
           activeWorkspaceId={activeWorkspaceId}
@@ -201,7 +201,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
       <div className="flex items-center space-x-1 flex-shrink-0">
         <button
           onClick={onOpenTabLibrary}
-          className="flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-colors"
+          className="flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-medium text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 transition-colors"
           title="Tab Library (Surface, Shallow, Deep, Abyss)"
         >
           <Layers className="w-3.5 h-3.5" />
@@ -210,7 +210,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
 
         <button
           onClick={onOpenMemoryCenter}
-          className="p-1.5 rounded-lg hover:bg-slate-100 text-sky-600 hover:text-sky-800 transition-colors"
+          className="p-1.5 rounded-lg hover:bg-[var(--surface-hover)] text-[var(--accent)] hover:opacity-80 transition-colors"
           title="Memory Center & Diagnostics"
         >
           <Activity className="w-4 h-4" />
@@ -218,7 +218,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
 
         <button
           onClick={onOpenDownloads}
-          className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-800 transition-colors"
+          className="p-1.5 rounded-lg hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
           title="Downloads"
         >
           <Download className="w-4 h-4" />
@@ -226,7 +226,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
 
         <button
           onClick={onOpenBookmarks}
-          className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-800 transition-colors"
+          className="p-1.5 rounded-lg hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
           title="Bookmarks"
         >
           <Star className="w-4 h-4" />
@@ -234,7 +234,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
 
         <button
           onClick={onOpenHistory}
-          className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-800 transition-colors"
+          className="p-1.5 rounded-lg hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
           title="History"
         >
           <Clock className="w-4 h-4" />
@@ -242,7 +242,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
 
         <button
           onClick={onOpenSettings}
-          className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-800 transition-colors"
+          className="p-1.5 rounded-lg hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
           title="Settings"
         >
           <Settings className="w-4 h-4" />

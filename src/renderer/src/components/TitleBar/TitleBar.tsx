@@ -22,7 +22,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({
 
   return (
     <header
-      className="flex items-center justify-between h-8 bg-white border-b border-slate-200/80 px-3 select-none text-xs text-slate-600 font-medium z-30"
+      className="flex items-center justify-between h-8 bg-[var(--surface)] border-b border-[var(--border)] px-3 select-none text-xs text-[var(--text-secondary)] font-medium z-30"
       style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
       onDoubleClick={handleToggleMaximize}
     >
@@ -32,17 +32,17 @@ export const TitleBar: React.FC<TitleBarProps> = ({
         style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
       >
         <OrcaLogo className="w-4 h-4 flex-shrink-0" />
-        <span className="font-bold tracking-wider text-slate-800 text-xs uppercase">
+        <span className="font-bold tracking-wider text-[var(--text-primary)] text-xs uppercase">
           Orca
         </span>
-        <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">
+        <span className="text-[10px] text-[var(--text-muted)] font-normal hidden sm:inline">
           Browser
         </span>
       </div>
 
       {/* Middle: Draggable window space */}
       <div
-        className="flex-1 h-full mx-4 flex items-center justify-center text-[11px] text-slate-400 truncate"
+        className="flex-1 h-full mx-4 flex items-center justify-center text-[11px] text-[var(--text-muted)] truncate"
         style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
       >
       </div>
@@ -55,7 +55,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({
         <button
           type="button"
           onClick={onMinimize}
-          className="w-7 h-6 flex items-center justify-center rounded hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
+          className="w-7 h-6 flex items-center justify-center rounded hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
           title="Minimize"
         >
           <Minus className="w-3.5 h-3.5" />
@@ -63,7 +63,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({
         <button
           type="button"
           onClick={handleToggleMaximize}
-          className="w-7 h-6 flex items-center justify-center rounded hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
+          className="w-7 h-6 flex items-center justify-center rounded hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
           title={isMaximized ? 'Restore' : 'Maximize'}
         >
           {isMaximized ? (
@@ -75,7 +75,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({
         <button
           type="button"
           onClick={onClose}
-          className="w-7 h-6 flex items-center justify-center rounded hover:bg-red-500 hover:text-white text-slate-500 transition-colors"
+          className="w-7 h-6 flex items-center justify-center rounded hover:bg-red-500 hover:text-white text-[var(--text-secondary)] transition-colors"
           title="Close"
         >
           <X className="w-3.5 h-3.5" />

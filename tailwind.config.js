@@ -8,22 +8,22 @@ export default {
     extend: {
       colors: {
         orca: {
-          surface: '#F8FAFC',       // Clean, bright background
-          card: '#FFFFFF',          // Card white
-          border: '#E2E8F0',        // Subtle border
-          'border-subtle': '#EEF2F6',
-          sky: '#E0F2FE',           // Sky blue tint
-          'sky-light': '#F0F9FF',   // Very light sky blue
-          ocean: '#0284C7',         // Ocean blue accent
-          'ocean-hover': '#0369A1',
-          'ocean-dark': '#0C4A6E',  // Deep ocean text
-          cyan: '#06B6D4',          // Soft cyan
-          'cyan-light': '#ECFEFF',
-          deep: '#1E293B',          // Slate dark text
-          muted: '#64748B',         // Muted text
-          'muted-light': '#94A3B8',
-          glass: 'rgba(255, 255, 255, 0.85)',
-          'glass-border': 'rgba(226, 232, 240, 0.7)',
+          surface: 'var(--surface)',
+          'surface-hover': 'var(--surface-hover)',
+          'surface-active': 'var(--surface-active)',
+          'surface-subtle': 'var(--surface-subtle)',
+          'bg-primary': 'var(--bg-primary)',
+          'bg-secondary': 'var(--bg-secondary)',
+          card: 'var(--surface)',
+          border: 'var(--border)',
+          'border-subtle': 'var(--border-subtle)',
+          'text-primary': 'var(--text-primary)',
+          'text-secondary': 'var(--text-secondary)',
+          'text-muted': 'var(--text-muted)',
+          accent: 'var(--accent)',
+          'accent-hover': 'var(--accent-hover)',
+          'accent-subtle': 'var(--accent-subtle)',
+          'accent-border': 'var(--accent-border)',
         },
         depth: {
           surface: '#0284C7',       // Active (Surface) - Sky Blue
@@ -36,7 +36,8 @@ export default {
         'orca-sm': '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
         'orca-md': '0 4px 12px -2px rgba(2, 132, 199, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04)',
         'orca-lg': '0 10px 25px -3px rgba(2, 132, 199, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.04)',
-        'orca-glass': '0 8px 32px 0 rgba(2, 132, 199, 0.08)',
+        'orca-modal': '0 4px 20px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)',
+        'orca-glass': '0 4px 20px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)',
       },
       fontFamily: {
         sans: [

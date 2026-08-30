@@ -113,7 +113,7 @@ export interface BrowserSettings {
   neverHibernateDomains: string[];
   searchEngine: string;
   defaultDownloadPath: string;
-  theme: 'light' | 'ocean';
+  theme: 'light' | 'dark' | 'system' | 'ocean';
   restoreSessionOnStartup: boolean;
   showMemoryBadge: boolean;
 }
