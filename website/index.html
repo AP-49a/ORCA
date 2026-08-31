@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html class="dark scroll-smooth" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ORCA Browser — More tabs. Less memory.</title>
+<meta name="description" content="ORCA is a Chromium-based desktop browser focused on intelligent tab management and efficient memory usage."/>
+<meta name="theme-color" content="#050A14"/>
+
+<!-- Open Graph -->
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://github.com/AP-49a/ORCA"/>
+<meta property="og:title" content="ORCA Browser — More tabs. Less memory."/>
+<meta property="og:description" content="ORCA is a Chromium-based desktop browser focused on intelligent tab management and efficient memory usage."/>
+<meta property="og:image" content="public/screenshots/orca-new-tab.png"/>
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="ORCA Browser — More tabs. Less memory."/>
+<meta name="twitter:description" content="ORCA is a Chromium-based desktop browser focused on intelligent tab management and efficient memory usage."/>
+<meta name="twitter:image" content="public/screenshots/orca-new-tab.png"/>
+
+<!-- Favicons -->
+<link rel="icon" type="image/x-icon" href="public/assets/orca.ico"/>
+<link rel="icon" type="image/svg+xml" href="public/assets/orca-logo-dark.svg"/>
+<link rel="apple-touch-icon" href="public/assets/orca-logo-dark.svg"/>
+
+<!-- Fonts -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@500;600;700&display=swap" rel="stylesheet"/>
+
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "surface-container-lowest": "#040e1f",
+        "on-primary-fixed": "#161c26",
+        "on-secondary-container": "#00566b",
+        "outline": "#909096",
+        "on-surface-variant": "#c6c6cc",
+        "primary-fixed-dim": "#c1c6d5",
+        "on-secondary-fixed": "#001f28",
+        "secondary-fixed-dim": "#4cd6ff",
+        "on-secondary-fixed-variant": "#004e60",
+        "inverse-on-surface": "#263143",
+        "inverse-surface": "#d8e3fb",
+        "background": "#081425",
+        "tertiary-fixed": "#e0e3e5",
+        "surface-tint": "#c1c6d5",
+        "surface": "#081425",
+        "surface-container": "#152031",
+        "on-error-container": "#ffdad6",
+        "error": "#ffb4ab",
+        "on-primary-container": "#747987",
+        "tertiary-fixed-dim": "#c4c7c9",
+        "primary": "#c1c6d5",
+        "surface-container-high": "#1f2a3c",
+        "on-error": "#690005",
+        "inverse-primary": "#595e6b",
+        "surface-variant": "#2a3548",
+        "secondary": "#a6e6ff",
+        "on-secondary": "#003543",
+        "on-surface": "#d8e3fb",
+        "on-primary": "#2b313c",
+        "secondary-fixed": "#b7eaff",
+        "surface-bright": "#2f3a4c",
+        "surface-container-low": "#111c2d",
+        "on-tertiary-fixed": "#191c1e",
+        "surface-dim": "#081425",
+        "on-tertiary-fixed-variant": "#444749",
+        "on-tertiary": "#2d3133",
+        "on-tertiary-container": "#767a7b",
+        "primary-container": "#050a14",
+        "tertiary-container": "#070a0c",
+        "on-background": "#d8e3fb",
+        "outline-variant": "#45474b",
+        "surface-container-highest": "#2a3548",
+        "error-container": "#93000a",
+        "primary-fixed": "#dde2f1",
+        "on-primary-fixed-variant": "#414753",
+        "secondary-container": "#14d1ff",
+        "tertiary": "#c4c7c9"
+      },
+      spacing: {
+        "stack-lg": "32px",
+        "gutter": "24px",
+        "container-max": "1280px",
+        "stack-md": "16px",
+        "stack-sm": "8px",
+        "margin-mobile": "20px",
+        "margin-desktop": "64px",
+        "section-gap": "100px"
+      },
+      fontFamily: {
+        "body-md": ["Inter", "sans-serif"],
+        "headline-lg": ["Lexend", "sans-serif"],
+        "display-xl-mobile": ["Lexend", "sans-serif"],
+        "headline-md": ["Lexend", "sans-serif"],
+        "label-sm": ["Inter", "sans-serif"],
+        "display-xl": ["Lexend", "sans-serif"],
+        "body-lg": ["Inter", "sans-serif"]
+      },
+      fontSize: {
+        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+        "headline-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "600" }],
+        "display-xl-mobile": ["40px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700" }],
+        "headline-md": ["32px", { lineHeight: "40px", fontWeight: "500" }],
+        "label-sm": ["14px", { lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "600" }],
+        "display-xl": ["72px", { lineHeight: "80px", letterSpacing: "-0.04em", fontWeight: "700" }],
+        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }]
+      }
+    }
+  }
+}
+</script>
+
+<style>
+  body {
+    background-color: #050A14;
+    color: #d8e3fb;
+    overflow-x: hidden;
+  }
+  .bg-primary-dark { background-color: #050A14; }
+  .bg-surface-custom { background-color: #0C1425; }
+  .border-charcoal { border-color: #1E293B; }
+  .text-cyan { color: #00D1FF; }
+  .bg-cyan { background-color: #00D1FF; }
+  .shadow-cyan-glow { box-shadow: 0 0 25px rgba(0,209,255,0.12); }
+  .shadow-cyan-glow-lg { box-shadow: 0 0 50px rgba(0,209,255,0.10), 0 20px 60px rgba(0,0,0,0.4); }
+  .btn-primary {
+    background-color: #00D1FF;
+    color: #050A14;
+    border-radius: 6px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+  }
+  .btn-primary:hover {
+    background-color: #FFFFFF;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0,209,255,0.25);
+  }
+  .btn-primary:focus-visible {
+    outline: 2px solid #00D1FF;
+    outline-offset: 3px;
+  }
+  .btn-secondary {
+    border: 1px solid #1E293B;
+    color: #FFFFFF;
+    border-radius: 6px;
+    background-color: rgba(12,20,37,0.6);
+    transition: all 0.2s ease;
+  }
+  .btn-secondary:hover {
+    background-color: #1E293B;
+    border-color: #38BDF8;
+    transform: translateY(-1px);
+  }
+  .btn-secondary:focus-visible {
+    outline: 2px solid #00D1FF;
+    outline-offset: 3px;
+  }
+  .mesh-bg {
+    background-image:
+      radial-gradient(at 40% 15%, hsla(190,100%,50%,0.06) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, hsla(210,100%,20%,0.12) 0px, transparent 50%);
+  }
+  /* Animated gradient badge */
+  .badge-glow {
+    background: linear-gradient(135deg, rgba(0,209,255,0.15), rgba(0,209,255,0.05));
+    border: 1px solid rgba(0,209,255,0.3);
+  }
+  /* Screenshot card hover effect */
+  .screenshot-card {
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease, border-color 0.2s ease;
+  }
+  .screenshot-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    border-color: rgba(0,209,255,0.3);
+  }
+  /* Feature card */
+  .feature-card {
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .feature-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0,209,255,0.25);
+  }
+  /* Nav link active indicator */
+  a.nav-active {
+    color: #00D1FF;
+    font-weight: 700;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+
+<body class="bg-primary-dark font-body-md text-on-surface antialiased mesh-bg selection:bg-cyan/30">
+
+<!-- ═══════════════════════════════════════════════════════════
+     TOP NAVIGATION
+═══════════════════════════════════════════════════════════ -->
+<header class="fixed top-0 w-full h-[64px] z-50 bg-surface/90 border-b border-outline-variant/30 backdrop-blur-md" role="banner">
+  <div class="flex justify-between items-center px-5 sm:px-8 md:px-margin-desktop w-full max-w-container-max mx-auto h-full">
+
+    <!-- Logo -->
+    <a href="#hero" class="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan rounded-md" aria-label="ORCA Browser — Home">
+      <img alt="ORCA Logo" class="w-7 h-7 object-contain group-hover:scale-105 transition-transform duration-200" src="public/assets/orca-logo-dark.svg" width="28" height="28"/>
+      <span class="text-[18px] font-headline-md font-bold tracking-tight text-white">ORCA</span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex items-center gap-8" aria-label="Main navigation">
+      <a class="text-on-surface-variant font-medium font-label-sm text-label-sm hover:text-cyan transition-colors duration-200" href="#tab-library">Tab Library</a>
+      <a class="text-on-surface-variant font-medium font-label-sm text-label-sm hover:text-cyan transition-colors duration-200" href="#memory-engine">Memory Engine</a>
+      <a class="text-on-surface-variant font-medium font-label-sm text-label-sm hover:text-cyan transition-colors duration-200" href="#settings">Settings</a>
+      <a class="text-on-surface-variant font-medium font-label-sm text-label-sm hover:text-cyan transition-colors duration-200" href="#features">Features</a>
+      <a class="text-on-surface-variant font-medium font-label-sm text-label-sm hover:text-cyan transition-colors duration-200" href="https://github.com/AP-49a/ORCA" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </nav>
+
+    <!-- Desktop CTA -->
+    <a href="https://github.com/AP-49a/ORCA/releases/latest" target="_blank" rel="noopener noreferrer"
+       class="btn-primary px-4 py-2 font-label-sm text-label-sm hidden md:inline-flex items-center gap-1.5"
+       aria-label="Download ORCA for Windows — latest release">
+      <span class="material-symbols-outlined text-[18px]" aria-hidden="true">download</span> Download ORCA
+    </a>
+
+    <!-- Mobile Hamburger -->
+    <button id="mobileMenuBtn" type="button"
+            class="md:hidden text-white p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+            aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span class="material-symbols-outlined text-2xl" id="menuIcon" aria-hidden="true">menu</span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu Dropdown -->
+  <div id="mobileMenu" class="hidden md:hidden bg-surface-container border-b border-outline-variant/30 px-6 py-5 flex flex-col gap-4" role="navigation" aria-label="Mobile navigation">
+    <a class="text-on-surface hover:text-cyan font-medium py-1.5 border-b border-outline-variant/20" href="#hero" onclick="closeMobileMenu()">Overview</a>
+    <a class="text-on-surface hover:text-cyan font-medium py-1.5 border-b border-outline-variant/20" href="#tab-library" onclick="closeMobileMenu()">Tab Library</a>
+    <a class="text-on-surface hover:text-cyan font-medium py-1.5 border-b border-outline-variant/20" href="#memory-engine" onclick="closeMobileMenu()">Memory Engine</a>
+    <a class="text-on-surface hover:text-cyan font-medium py-1.5 border-b border-outline-variant/20" href="#settings" onclick="closeMobileMenu()">Settings</a>
+    <a class="text-on-surface hover:text-cyan font-medium py-1.5 border-b border-outline-variant/20" href="#features" onclick="closeMobileMenu()">Features</a>
+    <a class="text-on-surface hover:text-cyan font-medium py-1.5 border-b border-outline-variant/20" href="https://github.com/AP-49a/ORCA" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+    <a href="https://github.com/AP-49a/ORCA/releases/latest" target="_blank" rel="noopener noreferrer"
+       class="btn-primary px-6 py-3.5 text-center font-bold inline-flex items-center justify-center gap-2 mt-2">
+      <span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span> Download ORCA for Windows
+    </a>
+  </div>
+</header>
+
+<main class="pt-[64px]">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO SECTION
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="hero" aria-label="Hero" class="max-w-container-max mx-auto px-5 sm:px-8 md:px-margin-desktop py-14 md:py-20 flex flex-col items-center text-center">
+
+    <!-- Brand emblem pill -->
+    <div class="w-14 h-14 rounded-2xl bg-surface-custom border border-charcoal flex items-center justify-center mb-6 shadow-cyan-glow" aria-hidden="true">
+      <img alt="" class="w-9 h-9 object-contain" src="public/assets/orca-logo-dark.svg" width="36" height="36"/>
+    </div>
+
+    <h1 class="font-display-xl-mobile md:font-display-xl text-display-xl-mobile md:text-display-xl mb-stack-md text-white tracking-tight">
+      More tabs.<br/>Less memory.
+    </h1>
+
+    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-stack-lg">
+      ORCA is a Chromium-based browser built to help you browse with more tabs while intelligently managing memory in the background.
+    </p>
+
+    <!-- CTAs -->
+    <div class="flex flex-col sm:flex-row gap-4 mb-4" id="download">
+      <a href="https://github.com/AP-49a/ORCA/releases/latest" target="_blank" rel="noopener noreferrer"
+         class="btn-primary px-8 py-4 font-label-sm text-label-sm flex items-center justify-center gap-2"
+         aria-label="Download ORCA for Windows — latest GitHub release">
+        <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1;" aria-hidden="true">download</span>
+        Download ORCA for Windows
+      </a>
+      <a href="#tab-library" class="btn-secondary px-8 py-4 font-label-sm text-label-sm flex items-center justify-center gap-2">
+        Explore Features
+      </a>
+    </div>
+
+    <p class="font-label-sm text-label-sm text-outline-variant mb-12">
+      Windows 10 / 11 &nbsp;•&nbsp; v1.0.0 &nbsp;•&nbsp; Free &amp; Open Source
+    </p>
+
+    <!-- Real ORCA New Tab Screenshot — Primary Hero Visual -->
+    <div class="w-full max-w-5xl rounded-[16px] border border-charcoal bg-surface-custom shadow-cyan-glow-lg overflow-hidden screenshot-card">
+      <img src="public/screenshots/orca-new-tab.png"
+           alt="ORCA Browser New Tab page"
+           class="w-full h-auto object-cover select-none block"
+           loading="eager"
+           width="1200" height="750"/>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       PRODUCT SCREENSHOTS SECTION
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="screenshots" aria-label="Product screenshots" class="max-w-container-max mx-auto px-5 sm:px-8 md:px-margin-desktop py-section-gap flex flex-col gap-24">
+
+    <!-- Tab Library -->
+    <article id="tab-library" aria-label="Tab Library feature" class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      <div class="lg:col-span-5 flex flex-col gap-5 text-left">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full badge-glow text-cyan text-xs font-semibold w-fit">
+          <span class="material-symbols-outlined text-[16px]" aria-hidden="true">layers</span>
+          Tab Lifecycle Management
+        </div>
+        <h2 class="font-headline-md text-headline-md text-white font-bold tracking-tight">The Tab Library</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+          Categorize active sessions into four distinct lifecycle tiers:
+          <strong class="text-white">Surface</strong> (active RAM),
+          <strong class="text-white">Shallow</strong> (idle),
+          <strong class="text-white">Deep</strong> (fully suspended WebContents), and
+          <strong class="text-white">Abyss</strong> (hibernated to disk).
+          Keep 100+ tabs accessible without crashing your machine.
+        </p>
+        <div class="grid grid-cols-2 gap-3 mt-1">
+          <div class="p-3 rounded-lg bg-surface-custom border border-charcoal">
+            <div class="text-white font-bold text-lg">4 Tiers</div>
+            <div class="text-xs text-on-surface-variant mt-0.5">Ocean Lifecycle Model</div>
+          </div>
+          <div class="p-3 rounded-lg bg-surface-custom border border-charcoal">
+            <div class="text-cyan font-bold text-lg">~0 MB</div>
+            <div class="text-xs text-on-surface-variant mt-0.5">Deep tab RAM footprint</div>
+          </div>
+        </div>
+      </div>
+      <div class="lg:col-span-7 rounded-[16px] border border-charcoal bg-surface-custom overflow-hidden screenshot-card">
+        <img src="public/screenshots/orca-tab-library.png"
+             alt="ORCA Tab Library"
+             class="w-full h-auto object-cover select-none block"
+             loading="lazy"
+             width="900" height="562"/>
+      </div>
+    </article>
+
+    <!-- Memory Engine -->
+    <article id="memory-engine" aria-label="Memory Engine feature" class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      <div class="lg:col-span-7 order-2 lg:order-1 rounded-[16px] border border-charcoal bg-surface-custom overflow-hidden screenshot-card">
+        <img src="public/screenshots/orca-memory-center.png"
+             alt="ORCA Memory Center"
+             class="w-full h-auto object-cover select-none block"
+             loading="lazy"
+             width="900" height="562"/>
+      </div>
+      <div class="lg:col-span-5 order-1 lg:order-2 flex flex-col gap-5 text-left">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full badge-glow text-cyan text-xs font-semibold w-fit">
+          <span class="material-symbols-outlined text-[16px]" aria-hidden="true">speed</span>
+          Real-Time Diagnostics
+        </div>
+        <h2 class="font-headline-md text-headline-md text-white font-bold tracking-tight">Intelligent Memory Engine</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+          Live process-correlated memory telemetry monitors Chromium renderers in real time. Under memory pressure, ORCA automatically identifies LRU candidate tabs, escalates suspension, and reclaims RAM seamlessly.
+        </p>
+        <ul class="flex flex-col gap-2.5 mt-1 text-sm text-on-surface-variant" aria-label="Memory Engine capabilities">
+          <li class="flex items-center gap-2"><span class="material-symbols-outlined text-cyan text-[18px]" aria-hidden="true">check_circle</span> Real-time PID memory estimation</li>
+          <li class="flex items-center gap-2"><span class="material-symbols-outlined text-cyan text-[18px]" aria-hidden="true">check_circle</span> Aggressiveness thresholds (Gentle, Moderate, Aggressive)</li>
+          <li class="flex items-center gap-2"><span class="material-symbols-outlined text-cyan text-[18px]" aria-hidden="true">check_circle</span> Keep Awake shield &amp; protected media tabs</li>
+          <li class="flex items-center gap-2"><span class="material-symbols-outlined text-cyan text-[18px]" aria-hidden="true">check_circle</span> Single-click suspension &amp; instant restoration</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- Settings -->
+    <article id="settings" aria-label="Settings feature" class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      <div class="lg:col-span-5 flex flex-col gap-5 text-left">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full badge-glow text-cyan text-xs font-semibold w-fit">
+          <span class="material-symbols-outlined text-[16px]" aria-hidden="true">settings</span>
+          Fine-Grained Control
+        </div>
+        <h2 class="font-headline-md text-headline-md text-white font-bold tracking-tight">Deep Ocean Control</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+          Customize suspension rules, set domain whitelists, adjust pressure sensitivity, and toggle between Deep Ocean dark mode, clean light mode, or system auto-synchronization.
+        </p>
+        <div class="p-4 rounded-xl bg-surface-custom border border-charcoal mt-1">
+          <div class="text-sm font-semibold text-white mb-1">Whitelisting &amp; Exclusions</div>
+          <div class="text-xs text-on-surface-variant leading-relaxed">Never suspend active downloads, media playback, pinned tabs, or whitelisted domains.</div>
+        </div>
+      </div>
+      <div class="lg:col-span-7 rounded-[16px] border border-charcoal bg-surface-custom overflow-hidden screenshot-card">
+        <img src="public/screenshots/orca-settings.png"
+             alt="ORCA Settings"
+             class="w-full h-auto object-cover select-none block"
+             loading="lazy"
+             width="900" height="562"/>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FEATURES BENTO GRID
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="features" aria-label="All features" class="max-w-container-max mx-auto px-5 sm:px-8 md:px-margin-desktop py-section-gap">
+
+    <!-- Section header -->
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <h2 class="font-headline-md text-headline-md text-white font-bold mb-4 tracking-tight">Engineered for Focus.</h2>
+      <p class="font-body-md text-body-md text-on-surface-variant">
+        ORCA redefines browser capabilities with tools designed to tame information overload — without claiming statistics it hasn't measured.
+      </p>
+    </div>
+
+    <!-- Bento Grid Row 1: Full-width Smart Tab Management + Memory Diagnostics  -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-gutter">
+
+      <!-- Smart Tab Management — 8 cols, shows real tab library screenshot -->
+      <div class="col-span-1 md:col-span-8 bg-surface-custom rounded-2xl p-8 flex flex-col justify-between border border-charcoal feature-card" role="article">
+        <div>
+          <h3 class="font-headline-md text-headline-md text-secondary mb-3 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[28px]" style="font-variation-settings:'FILL' 1;" aria-hidden="true">tab</span>
+            Smart Tab Management
+          </h3>
+          <p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg max-w-lg">
+            Never drown in tabs again. ORCA's Memory Engine automatically hibernates inactive tabs to free up RAM, while the Tab Library organizes your sessions across four progressive lifecycle tiers.
+          </p>
+        </div>
+        <div class="w-full rounded-lg overflow-hidden border border-outline-variant/30 mt-4">
+          <img src="public/screenshots/orca-tab-library.png" alt="ORCA Tab Library" class="w-full h-auto object-cover select-none block" loading="lazy"/>
+        </div>
+      </div>
+
+      <!-- Memory Diagnostics — 4 cols -->
+      <div class="col-span-1 md:col-span-4 bg-surface-custom rounded-2xl p-8 flex flex-col border border-charcoal feature-card" role="article">
+        <h3 class="font-headline-md text-headline-md text-secondary mb-3 flex items-center gap-2">
+          <span class="material-symbols-outlined text-[28px]" style="font-variation-settings:'FILL' 1;" aria-hidden="true">speed</span>
+          Memory Diagnostics
+        </h3>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg flex-grow">
+          Real-time telemetry correlates PID memory footprints with intelligent pressure-aware tab management.
+        </p>
+        <div class="w-full rounded-lg overflow-hidden border border-outline-variant/30 mt-auto">
+          <img src="public/screenshots/orca-memory-center.png" alt="ORCA Memory Center" class="w-full h-auto object-cover select-none block" loading="lazy"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bento Grid Row 2: Workspaces + Settings -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+
+      <!-- Workspaces — 6 cols -->
+      <div class="col-span-1 md:col-span-6 bg-surface-custom rounded-2xl p-8 border border-charcoal feature-card" role="article">
+        <h3 class="font-headline-md text-headline-md text-secondary mb-3 flex items-center gap-2">
+          <span class="material-symbols-outlined text-[28px]" style="font-variation-settings:'FILL' 1;" aria-hidden="true">workspaces</span>
+          Contextual Workspaces
+        </h3>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg">
+          Isolate sessions into dedicated environments for Work, Research, and Personal browsing. Each workspace maintains its own tabs, cookies, and state with zero cross-contamination.
+        </p>
+        <div class="w-full rounded-lg overflow-hidden border border-outline-variant/30">
+          <img src="public/screenshots/orca-new-tab.png" alt="ORCA Browser New Tab page" class="w-full h-auto object-cover select-none block" loading="lazy"/>
+        </div>
+      </div>
+
+      <!-- Settings / Customization — 6 cols -->
+      <div class="col-span-1 md:col-span-6 bg-surface-custom rounded-2xl p-8 border border-charcoal feature-card" role="article">
+        <h3 class="font-headline-md text-headline-md text-secondary mb-3 flex items-center gap-2">
+          <span class="material-symbols-outlined text-[28px]" style="font-variation-settings:'FILL' 1;" aria-hidden="true">tune</span>
+          Precision Customization
+        </h3>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg">
+          Tailor suspension aggressiveness, configure idle timeouts, whitelist domains, and choose between Deep Ocean dark mode, crisp light theme, or auto system sync.
+        </p>
+        <div class="w-full rounded-lg overflow-hidden border border-outline-variant/30">
+          <img src="public/screenshots/orca-settings.png" alt="ORCA Settings" class="w-full h-auto object-cover select-none block" loading="lazy"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature Pills Row -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mt-gutter">
+      <div class="bg-surface-custom border border-charcoal rounded-xl p-5 flex flex-col gap-2 items-start feature-card">
+        <span class="material-symbols-outlined text-secondary text-[24px]" aria-hidden="true">bookmark</span>
+        <div class="text-sm font-semibold text-white">Bookmarks</div>
+      </div>
+      <div class="bg-surface-custom border border-charcoal rounded-xl p-5 flex flex-col gap-2 items-start feature-card">
+        <span class="material-symbols-outlined text-secondary text-[24px]" aria-hidden="true">history</span>
+        <div class="text-sm font-semibold text-white">History</div>
+      </div>
+      <div class="bg-surface-custom border border-charcoal rounded-xl p-5 flex flex-col gap-2 items-start feature-card">
+        <span class="material-symbols-outlined text-secondary text-[24px]" aria-hidden="true">download</span>
+        <div class="text-sm font-semibold text-white">Downloads</div>
+      </div>
+      <div class="bg-surface-custom border border-charcoal rounded-xl p-5 flex flex-col gap-2 items-start feature-card">
+        <span class="material-symbols-outlined text-secondary text-[24px]" aria-hidden="true">dark_mode</span>
+        <div class="text-sm font-semibold text-white">Dark / Light / Auto</div>
+      </div>
+      <div class="bg-surface-custom border border-charcoal rounded-xl p-5 flex flex-col gap-2 items-start feature-card">
+        <span class="material-symbols-outlined text-secondary text-[24px]" aria-hidden="true">restore</span>
+        <div class="text-sm font-semibold text-white">Session Restore</div>
+      </div>
+      <div class="bg-surface-custom border border-charcoal rounded-xl p-5 flex flex-col gap-2 items-start feature-card">
+        <span class="material-symbols-outlined text-secondary text-[24px]" aria-hidden="true">open_in_new</span>
+        <div class="text-sm font-semibold text-white">Open Source</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TRUST / DOWNLOAD BENTO
+  ═══════════════════════════════════════════════════════════ -->
+  <section aria-label="Download and trust signals" class="max-w-container-max mx-auto px-5 sm:px-8 md:px-margin-desktop pb-section-gap">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+
+      <!-- Lean Architecture -->
+      <div class="bg-surface-custom rounded-[12px] p-10 flex flex-col gap-stack-md border border-charcoal feature-card">
+        <div class="w-12 h-12 rounded-full border border-charcoal flex items-center justify-center bg-primary-container text-secondary">
+          <span class="material-symbols-outlined" aria-hidden="true">memory</span>
+        </div>
+        <h3 class="font-headline-md text-headline-md text-on-surface">Lean Architecture</h3>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+          Optimized memory management ensures smooth performance even with 50+ tabs open simultaneously.
+        </p>
+      </div>
+
+      <!-- Open Source — 2 cols, highlighted -->
+      <div class="bg-surface-custom rounded-[12px] p-10 flex flex-col gap-stack-md md:col-span-2 border-t-2 border-t-secondary border border-charcoal feature-card">
+        <div class="w-12 h-12 rounded-full border border-charcoal flex items-center justify-center bg-primary-container text-secondary">
+          <span class="material-symbols-outlined" aria-hidden="true">code</span>
+        </div>
+        <h3 class="font-headline-md text-headline-md text-on-surface">Open Source Core</h3>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">
+          Built openly with community trust in mind. Inspect the code, report issues, or contribute directly on GitHub.
+        </p>
+        <div class="mt-auto pt-4">
+          <a class="inline-flex items-center gap-2 text-on-surface hover:text-secondary font-label-sm text-label-sm transition-colors border border-charcoal px-4 py-2 rounded bg-primary-container hover:border-secondary/50"
+             href="https://github.com/AP-49a/ORCA" target="_blank" rel="noopener noreferrer"
+             aria-label="View ORCA on GitHub">
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            View on GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FINAL CTA BANNER
+  ═══════════════════════════════════════════════════════════ -->
+  <section aria-label="Download call to action" class="max-w-container-max mx-auto px-5 sm:px-8 md:px-margin-desktop pb-section-gap">
+    <div class="rounded-3xl border border-charcoal bg-gradient-to-b from-[#0C1425] to-[#050A14] p-10 md:p-16 text-center flex flex-col items-center gap-6 shadow-cyan-glow">
+      <h2 class="text-3xl md:text-5xl font-bold text-white tracking-tight leading-tight">Ready for faster, lighter browsing?</h2>
+      <p class="text-on-surface-variant text-base md:text-lg max-w-xl">
+        Download ORCA for Windows and experience automatic, intelligent tab memory management today.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 mt-2">
+        <a href="https://github.com/AP-49a/ORCA/releases/latest" target="_blank" rel="noopener noreferrer"
+           class="btn-primary px-8 py-4 font-label-sm text-label-sm flex items-center justify-center gap-2"
+           aria-label="Download the latest ORCA release from GitHub">
+          <span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
+          Download ORCA for Windows
+        </a>
+        <a href="https://github.com/AP-49a/ORCA" target="_blank" rel="noopener noreferrer"
+           class="btn-secondary px-8 py-4 font-label-sm text-label-sm flex items-center justify-center gap-2">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          View on GitHub
+        </a>
+      </div>
+      <p class="text-xs text-outline-variant">Windows 10 / 11 &nbsp;•&nbsp; v1.0.0 &nbsp;•&nbsp; 64-bit &nbsp;•&nbsp; ISC License</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════ -->
+<footer class="w-full py-16 border-t border-outline-variant/20 bg-surface" role="contentinfo">
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter px-5 sm:px-8 md:px-margin-desktop max-w-container-max mx-auto">
+
+    <!-- Brand column -->
+    <div class="md:col-span-5 flex flex-col gap-4">
+      <a href="#hero" class="flex items-center gap-2.5 w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan rounded-md" aria-label="Back to top">
+        <img alt="ORCA Logo" class="w-6 h-6 object-contain" src="public/assets/orca-logo-dark.svg" width="24" height="24"/>
+        <span class="font-headline-md font-bold text-white text-xl">ORCA</span>
+      </a>
+      <p class="font-body-md text-body-md text-on-surface-variant max-w-sm">
+        Built with Electron, React and TypeScript. Fast, memory-conscious browsing.
+      </p>
+      <p class="text-xs text-outline-variant">© 2026 ORCA Browser Team. Released under the ISC License.</p>
+    </div>
+
+    <!-- Links columns -->
+    <div class="md:col-span-7 flex flex-wrap gap-12 md:justify-end mt-6 md:mt-0">
+      <nav class="flex flex-col gap-2.5" aria-label="Product navigation">
+        <span class="text-xs font-bold uppercase tracking-wider text-white mb-1">Product</span>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#hero">Overview</a>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#tab-library">Tab Library</a>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#memory-engine">Memory Engine</a>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#settings">Settings</a>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#features">Features</a>
+      </nav>
+
+      <nav class="flex flex-col gap-2.5" aria-label="Download navigation">
+        <span class="text-xs font-bold uppercase tracking-wider text-white mb-1">Download</span>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200"
+           href="https://github.com/AP-49a/ORCA/releases/latest" target="_blank" rel="noopener noreferrer">
+          Windows 64-bit
+        </a>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200"
+           href="https://github.com/AP-49a/ORCA/releases" target="_blank" rel="noopener noreferrer">
+          Release Notes
+        </a>
+      </nav>
+
+      <nav class="flex flex-col gap-2.5" aria-label="Resources navigation">
+        <span class="text-xs font-bold uppercase tracking-wider text-white mb-1">Resources</span>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200"
+           href="https://github.com/AP-49a/ORCA" target="_blank" rel="noopener noreferrer">
+          GitHub Repository
+        </a>
+        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200"
+           href="https://github.com/AP-49a/ORCA/issues" target="_blank" rel="noopener noreferrer">
+          Report an Issue
+        </a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<!-- Mobile menu JavaScript -->
+<script>
+  const btn = document.getElementById('mobileMenuBtn');
+  const menu = document.getElementById('mobileMenu');
+  const icon = document.getElementById('menuIcon');
+
+  function closeMobileMenu() {
+    menu.classList.add('hidden');
+    btn.setAttribute('aria-expanded', 'false');
+    icon.textContent = 'menu';
+  }
+
+  btn.addEventListener('click', function () {
+    const isOpen = !menu.classList.contains('hidden');
+    if (isOpen) {
+      closeMobileMenu();
+    } else {
+      menu.classList.remove('hidden');
+      btn.setAttribute('aria-expanded', 'true');
+      icon.textContent = 'close';
+    }
+  });
+
+  // Close on outside click
+  document.addEventListener('click', function(e) {
+    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+      closeMobileMenu();
+    }
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeMobileMenu();
+  });
+</script>
+</body>
+</html>

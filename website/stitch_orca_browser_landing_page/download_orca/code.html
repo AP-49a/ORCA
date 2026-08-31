@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Download ORCA Browser</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Lexend:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#040e1f",
+                        "on-primary-fixed": "#161c26",
+                        "on-secondary-container": "#00566b",
+                        "outline": "#909096",
+                        "on-surface-variant": "#c6c6cc",
+                        "primary-fixed-dim": "#c1c6d5",
+                        "on-secondary-fixed": "#001f28",
+                        "secondary-fixed-dim": "#4cd6ff",
+                        "on-secondary-fixed-variant": "#004e60",
+                        "inverse-on-surface": "#263143",
+                        "inverse-surface": "#d8e3fb",
+                        "background": "#081425",
+                        "tertiary-fixed": "#e0e3e5",
+                        "surface-tint": "#c1c6d5",
+                        "surface": "#081425",
+                        "surface-container": "#152031",
+                        "on-error-container": "#ffdad6",
+                        "error": "#ffb4ab",
+                        "on-primary-container": "#747987",
+                        "tertiary-fixed-dim": "#c4c7c9",
+                        "primary": "#c1c6d5",
+                        "surface-container-high": "#1f2a3c",
+                        "on-error": "#690005",
+                        "inverse-primary": "#595e6b",
+                        "surface-variant": "#2a3548",
+                        "secondary": "#a6e6ff",
+                        "on-secondary": "#003543",
+                        "on-surface": "#d8e3fb",
+                        "on-primary": "#2b313c",
+                        "secondary-fixed": "#b7eaff",
+                        "surface-bright": "#2f3a4c",
+                        "surface-container-low": "#111c2d",
+                        "on-tertiary-fixed": "#191c1e",
+                        "surface-dim": "#081425",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "on-tertiary": "#2d3133",
+                        "on-tertiary-container": "#767a7b",
+                        "primary-container": "#050a14",
+                        "tertiary-container": "#070a0c",
+                        "on-background": "#d8e3fb",
+                        "outline-variant": "#45474b",
+                        "surface-container-highest": "#2a3548",
+                        "error-container": "#93000a",
+                        "primary-fixed": "#dde2f1",
+                        "on-primary-fixed-variant": "#414753",
+                        "secondary-container": "#14d1ff",
+                        "tertiary": "#c4c7c9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-lg": "32px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px",
+                        "section-gap": "120px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Lexend"],
+                        "display-xl-mobile": ["Lexend"],
+                        "headline-md": ["Lexend"],
+                        "label-sm": ["Inter"],
+                        "display-xl": ["Lexend"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Lexend"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "display-xl-mobile": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "500" }],
+                        "label-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-xl": ["72px", { "lineHeight": "80px", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #050A14;
+        }
+        .bg-level-1 {
+            background-color: #0C1425;
+            border: 1px solid #1E293B;
+        }
+    </style>
+</head>
+<body class="bg-primary-container text-on-surface min-h-screen flex flex-col font-body-md antialiased selection:bg-secondary selection:text-primary-container">
+<!-- Top Navigation -->
+<header class="fixed top-0 w-full h-[64px] z-50 border-b border-outline-variant/30 backdrop-blur-md bg-surface/90">
+<nav class="flex justify-between items-center px-margin-desktop w-full max-w-container-max mx-auto h-full">
+<div class="flex items-center gap-3">
+<img alt="ORCA Logo" class="w-7 h-7 object-contain" src="assets/orca-logo-dark.svg"/>
+<a class="text-body-lg font-headline-md font-bold tracking-tight text-white" href="../orca_landing_page/code.html">ORCA</a>
+</div>
+<div class="hidden md:flex items-center gap-gutter h-full">
+<ul class="flex items-center gap-8 h-full">
+<li class="h-full flex items-center">
+<a class="text-on-surface-variant font-medium font-label-sm text-label-sm hover:text-on-surface transition-colors duration-200" href="../orca_features/code.html">Features</a>
+</li>
+<li class="h-full flex items-center">
+<a class="text-on-surface-variant font-medium font-label-sm text-label-sm hover:text-on-surface transition-colors duration-200" href="../orca_memory_engine/code.html">Memory Engine</a>
+</li>
+<li class="h-full flex items-center">
+<a class="text-on-surface-variant font-medium font-label-sm text-label-sm hover:text-on-surface transition-colors duration-200" href="../orca_landing_page/code.html#tab-library">Tab Library</a>
+</li>
+<li class="h-full flex items-center">
+<a class="text-on-surface-variant font-medium font-label-sm text-label-sm hover:text-on-surface transition-colors duration-200" href="../orca_landing_page/code.html#screenshots">Screenshots</a>
+</li>
+<li class="h-full flex items-center">
+<a class="text-on-surface-variant font-medium font-label-sm text-label-sm hover:text-on-surface transition-colors duration-200" href="../orca_landing_page/code.html#settings">Settings</a>
+</li>
+</ul>
+</div>
+<div class="flex items-center">
+<a class="hidden md:flex items-center justify-center bg-secondary text-primary-container px-6 py-2 rounded font-label-sm text-label-sm hover:bg-white transition-colors duration-200 scale-95" href="#">Download ORCA</a>
+<button class="md:hidden text-on-surface p-2">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</nav>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-[120px] pb-section-gap px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto flex flex-col items-center gap-section-gap">
+<!-- Hero Section -->
+<section class="w-full flex flex-col items-center text-center gap-stack-lg max-w-3xl mt-6">
+<div class="w-14 h-14 rounded-2xl bg-surface-custom border border-[#1E293B] flex items-center justify-center mb-2 shadow-cyan-glow">
+<img alt="ORCA Emblem" class="w-9 h-9 object-contain" src="assets/orca-logo-dark.svg"/>
+</div>
+<h1 class="font-display-xl-mobile text-display-xl-mobile md:font-display-xl md:text-display-xl text-on-surface tracking-tight">
+Experience the Speed of ORCA
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+A minimalist, high-performance browser designed for power users. Built on Chromium and Electron, refined for memory efficiency.
+</p>
+<div class="flex flex-col sm:flex-row gap-stack-md mt-4 w-full sm:w-auto">
+<a class="flex items-center justify-center gap-2 bg-secondary text-primary-container px-8 py-4 rounded font-label-sm text-label-sm hover:bg-white transition-colors duration-200 group font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+Download for Windows (64-bit)
+</a>
+<a class="flex items-center justify-center gap-2 border border-[#1E293B] text-on-surface px-8 py-4 rounded font-label-sm text-label-sm hover:bg-white hover:text-primary-container transition-all duration-200 opacity-50 cursor-not-allowed" href="#" title="macOS version coming soon">
+<span class="material-symbols-outlined" data-icon="desktop_mac">desktop_mac</span>
+macOS (Coming Soon)
+</a>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mt-2">
+<span class="material-symbols-outlined text-[16px]" data-icon="verified">verified</span>
+Current Version: v1.0.0 (Deep Ocean Core)
+<span class="mx-2">•</span>
+<a class="text-secondary hover:underline flex items-center gap-1" href="#">
+Release Notes
+<span class="material-symbols-outlined text-[14px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</section>
+<!-- Product Preview Screenshot -->
+<div class="w-full max-w-5xl rounded-[16px] border border-[#1E293B] bg-surface overflow-hidden shadow-2xl">
+<img src="screenshots/orca-new-tab.png" alt="ORCA Browser New Tab Interface" class="w-full h-auto object-cover select-none"/>
+</div>
+<!-- Trust & Technical Details Bento Grid -->
+<section class="w-full grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Bento Item 1 -->
+<div class="bg-level-1 rounded-[12px] p-10 flex flex-col gap-stack-md relative overflow-hidden group border border-[#1E293B]">
+<div class="w-12 h-12 rounded-full border border-[#1E293B] flex items-center justify-center bg-primary-container text-secondary z-10">
+<span class="material-symbols-outlined" data-icon="memory">memory</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface z-10">Lean Architecture</h3>
+<p class="font-body-md text-body-md text-on-surface-variant z-10">
+Optimized memory management ensures smooth performance even with 50+ tabs open.
+</p>
+</div>
+<!-- Bento Item 2 -->
+<div class="bg-level-1 rounded-[12px] p-10 flex flex-col gap-stack-md relative overflow-hidden group md:col-span-2 border border-[#1E293B] border-t-2 border-t-secondary">
+<div class="w-12 h-12 rounded-full border border-[#1E293B] flex items-center justify-center bg-primary-container text-secondary z-10">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface z-10">Open Source Core</h3>
+<p class="font-body-md text-body-md text-on-surface-variant z-10 max-w-lg">
+Built openly with community trust in mind. Inspect our code, report issues, or contribute directly on GitHub.
+</p>
+<div class="mt-auto pt-4 z-10">
+<a class="inline-flex items-center gap-2 text-on-surface hover:text-secondary font-label-sm text-label-sm transition-colors border border-[#1E293B] px-4 py-2 rounded bg-primary-container" href="#">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
+View Releases on GitHub
+</a>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-section-gap border-t border-outline-variant/20 bg-surface">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="md:col-span-4 flex flex-col gap-stack-md">
+<span class="text-headline-md font-headline-md font-bold text-white flex items-center gap-2">
+<img alt="ORCA Logo" class="w-6 h-6 object-contain" src="assets/orca-logo-dark.svg"/>
+ORCA
+</span>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm">
+Built with Electron, React and TypeScript. © 2026 ORCA Browser.
+</p>
+</div>
+<div class="md:col-span-8 flex flex-wrap gap-x-12 gap-y-stack-md md:justify-end mt-8 md:mt-0 items-center">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200 focus:outline-none focus:text-secondary" href="../orca_landing_page/code.html">Overview</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200 focus:outline-none focus:text-secondary" href="../orca_features/code.html">Features</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200 focus:outline-none focus:text-secondary" href="../orca_memory_engine/code.html">Memory Engine</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200 focus:outline-none focus:text-secondary" href="../orca_landing_page/code.html#settings">Settings</a>
+</div>
+</div>
+</footer>
+</body></html>

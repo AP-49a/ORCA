@@ -5,14 +5,16 @@
   "description": "ORCA - More tabs. Less memory.",
   "main": "dist-electron/main/index.js",
   "scripts": {
-  "dev": "vite",
-  "build": "tsc && vite build",
-  "build:ts": "tsc -b",
-  "test": "npx tsx tests/memoryEngine.test.ts",
-  "preview": "vite preview",
-  "start": "electron .",
-  "dist": "npm run build && electron-builder"
-},
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:ts": "tsc -b",
+    "test": "npx tsx tests/memoryEngine.test.ts",
+    "preview": "vite preview",
+    "start": "electron .",
+    "dist": "npm run build && electron-builder",
+    "website": "npx serve website -l 3000",
+    "website:dev": "npx serve website -l 3000 --no-clipboard"
+  },
   "keywords": [
     "browser",
     "electron",
