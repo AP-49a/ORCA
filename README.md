@@ -80,3 +80,6 @@ For example:
 Personal
 Research
 Development
+## Trademark
+
+"ORCA" and the ORCA logo are associated with the ORCA Browser project and are not granted under the software license. Forks and derivative projects may use and modify the source code under the terms of the MIT License, but should not use the ORCA name or logo in a way that suggests they are the official ORCA Browser project.
