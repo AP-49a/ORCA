@@ -64,7 +64,11 @@ export const IPC_CHANNELS = {
   WINDOW_MAXIMIZE: 'window:maximize',
   WINDOW_CLOSE: 'window:close',
 
+  // Theme
+  THEME_GET: 'theme:get',
+
   // Events from Main -> Renderer
+  EVENT_THEME_CHANGED: 'event:theme-changed',
   EVENT_TABS_UPDATED: 'event:tabs-updated',
   EVENT_ACTIVE_TAB_CHANGED: 'event:active-tab-changed',
   EVENT_TAB_NAVIGATED: 'event:tab-navigated',

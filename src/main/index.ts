@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron';
 import { TabManager } from './browser/TabManager';
 import { BrowserWindowManager } from './browser/BrowserWindowManager';
 import { MemoryManager } from './memory/MemoryManager';
@@ -67,6 +67,13 @@ async function initializeApp() {
   });
 
   windowManager = new BrowserWindowManager(tabManager);
+
+  // Wire the sendToRenderer helper into the window manager so it can push
+  // theme-changed events to the renderer process.
+  windowManager.setSendToRenderer(sendToRenderer);
+
+  // IPC: renderer can query the current dark mode state on startup
+  ipcMain.handle(IPC_CHANNELS.THEME_GET, () => nativeTheme.shouldUseDarkColors);
 
   // Setup MemoryManager
   memoryManager = new MemoryManager({

@@ -1,8 +1,8 @@
 version: 1.0.0
 files:
   - url: ORCA-Setup-1.0.0.exe
-    sha512: ij6enxP+AMhk50ZZDQpSEMvfOe6RNYY+lcQOFITRQiABZv309dwKbiOZg6ujClGtMPSpjhIlzHIVb6+Vco1I7A==
-    size: 86765878
+    sha512: n4oOuqt4vRrZk9RG+qiaKR7HV7Ia4tD9LxHGUtWng9em0emeCeLGM0O16h2a/dRFlsv93+Vq0D1aOcnhuJZOJg==
+    size: 88043817
 path: ORCA-Setup-1.0.0.exe
-sha512: ij6enxP+AMhk50ZZDQpSEMvfOe6RNYY+lcQOFITRQiABZv309dwKbiOZg6ujClGtMPSpjhIlzHIVb6+Vco1I7A==
-releaseDate: '2026-08-30T19:52:03.014Z'
+sha512: n4oOuqt4vRrZk9RG+qiaKR7HV7Ia4tD9LxHGUtWng9em0emeCeLGM0O16h2a/dRFlsv93+Vq0D1aOcnhuJZOJg==
+releaseDate: '2026-09-01T18:07:27.125Z'

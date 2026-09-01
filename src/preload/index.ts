@@ -97,6 +97,10 @@ export interface OrcaAPI {
   onBookmarksUpdated: (callback: (bookmarks: Bookmark[]) => void) => () => void;
   onHistoryUpdated: (callback: (history: HistoryItem[]) => void) => () => void;
   onSettingsUpdated: (callback: (settings: BrowserSettings) => void) => () => void;
+
+  // Theme
+  getTheme: () => Promise<boolean>; // resolves true = dark mode
+  onThemeChanged: (callback: (isDark: boolean) => void) => () => void;
 }
 
 const api: OrcaAPI = {
@@ -230,6 +234,14 @@ const api: OrcaAPI = {
     const handler = (_: any, settings: BrowserSettings) => callback(settings);
     ipcRenderer.on(IPC_CHANNELS.EVENT_SETTINGS_UPDATED, handler);
     return () => ipcRenderer.removeListener(IPC_CHANNELS.EVENT_SETTINGS_UPDATED, handler);
+  },
+
+  // Theme
+  getTheme: () => ipcRenderer.invoke(IPC_CHANNELS.THEME_GET),
+  onThemeChanged: (callback) => {
+    const handler = (_: any, isDark: boolean) => callback(isDark);
+    ipcRenderer.on(IPC_CHANNELS.EVENT_THEME_CHANGED, handler);
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.EVENT_THEME_CHANGED, handler);
   },
 };
 

@@ -22,7 +22,7 @@
     "tabs",
     "memory-management"
   ],
-  "author": "ORCA Team",
+  "author": "Ankan",
   "license": "ISC",
   "dependencies": {
     "clsx": "^2.1.1",
