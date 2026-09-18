@@ -151,6 +151,7 @@ export interface BrowserSettings {
   autoSuspend: boolean;
   suspendTimeoutMinutes: number;
   suspendAggressiveness: SuspensionAggressiveness;
+  suspendTimeoutCustomized?: boolean;
   memoryPressureThresholdPercent: number; // 60 | 70 | 80 | 90
   neverSuspendPinned: boolean;
   neverSuspendMedia: boolean;

@@ -1,6 +1,7 @@
-﻿import { BrowserSettings, MemoryStats, Tab, Workspace } from '../../shared/types';
+import { BrowserSettings, MemoryStats, Tab, Workspace } from '../../shared/types';
 import { MemoryEstimator } from './MemoryEstimator';
 import { SuspensionRules } from './SuspensionRules';
+import { NavigationManager } from '../browser/NavigationManager';
 
 export interface MemoryManagerDelegate {
   getTabs: () => Tab[];
@@ -175,22 +176,25 @@ export class MemoryManager {
       for (const tab of tabs) {
         if (tab.id === activeTabId) continue;
         if (tab.state === 'SUSPENDED' || tab.state === 'HIBERNATED') continue;
-        if (tab.url.startsWith('orca://')) continue;
+        if (tab.url.startsWith('orca://') || tab.url.startsWith('about:')) continue;
         if (tab.keepAwake) continue;
         if (tab.pinned && (settings.neverSuspendPinned ?? true)) continue;
         if (tab.audioActive && (settings.neverSuspendMedia ?? true)) continue;
 
-        const domain = tab.url.split('/')[2] || '';
-        const isProtected = settings.neverSuspendDomains.some((d) => domain.includes(d.trim()));
-        if (!isProtected) {
-          const memBefore = tab.actualMemoryMB ?? tab.estimatedMemoryMB ?? 180;
-          await this.delegate.suspendTab(tab.id);
-          suspendedCount++;
-          estimatedFreedMB += memBefore;
-          this.lifetimeFreedMB += memBefore;
-          this.lifetimeSuspendedCount++;
-          this.estimator.markSuspensionEvent(memBefore);
-        }
+        const domain = NavigationManager.extractDomain(tab.url).toLowerCase();
+        const isProtected = settings.neverSuspendDomains.some((d) => {
+          const match = d.trim().toLowerCase();
+          return match && (domain === match || domain.endsWith(`.${match}`));
+        });
+        if (isProtected) continue;
+
+        const memBefore = tab.actualMemoryMB ?? tab.estimatedMemoryMB ?? 180;
+        await this.delegate.suspendTab(tab.id);
+        suspendedCount++;
+        estimatedFreedMB += memBefore;
+        this.lifetimeFreedMB += memBefore;
+        this.lifetimeSuspendedCount++;
+        this.estimator.markSuspensionEvent(memBefore);
       }
 
       const afterStats = await this.getStats();
@@ -235,10 +239,17 @@ export class MemoryManager {
       if (tab.workspaceId !== workspaceId) continue;
       if (tab.id === activeTabId) continue;
       if (tab.state === 'SUSPENDED' || tab.state === 'HIBERNATED') continue;
-      if (tab.url.startsWith('orca://')) continue;
+      if (tab.url.startsWith('orca://') || tab.url.startsWith('about:')) continue;
       if (tab.keepAwake) continue;
       if (tab.pinned && (settings.neverSuspendPinned ?? true)) continue;
       if (tab.audioActive && (settings.neverSuspendMedia ?? true)) continue;
+
+      const domain = NavigationManager.extractDomain(tab.url).toLowerCase();
+      const isNeverSuspend = settings.neverSuspendDomains.some((d) => {
+        const match = d.trim().toLowerCase();
+        return match && (domain === match || domain.endsWith(`.${match}`));
+      });
+      if (isNeverSuspend) continue;
 
       const memBefore = tab.actualMemoryMB ?? tab.estimatedMemoryMB ?? 180;
       await this.delegate.suspendTab(tab.id);

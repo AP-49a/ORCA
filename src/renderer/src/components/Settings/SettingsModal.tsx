@@ -253,6 +253,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             onUpdateSettings({
                               suspendAggressiveness: id as any,
                               suspendTimeoutMinutes: timeoutMap[id] || 15,
+                              suspendTimeoutCustomized: false,
                             });
                           }}
                           className={`p-3 rounded-2xl text-left border transition-all flex flex-col justify-between ${
@@ -289,7 +290,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     {[5, 15, 30, 60, 120].map((mins) => (
                       <button
                         key={mins}
-                        onClick={() => onUpdateSettings({ suspendTimeoutMinutes: mins })}
+                        onClick={() => onUpdateSettings({ suspendTimeoutMinutes: mins, suspendTimeoutCustomized: true })}
                         className={`py-2 px-2.5 rounded-xl text-xs font-semibold border transition-all text-center ${
                           settings.suspendTimeoutMinutes === mins
                             ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-xs'
@@ -451,6 +452,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       autoSuspend: true,
                       suspendTimeoutMinutes: 15,
                       suspendAggressiveness: 'balanced',
+                      suspendTimeoutCustomized: false,
                       memoryPressureThresholdPercent: 80,
                       neverSuspendPinned: true,
                       neverSuspendMedia: true,

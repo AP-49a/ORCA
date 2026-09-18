@@ -1,5 +1,9 @@
-﻿import os from 'os';
-import { app } from 'electron';
+import os from 'os';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const electronApi = process.versions.electron ? require('electron') : {};
+const app = electronApi.app;
 import {
   MemoryPoint,
   MemoryPressureLevel,

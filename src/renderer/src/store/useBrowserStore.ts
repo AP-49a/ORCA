@@ -30,6 +30,7 @@ export function useBrowserStore() {
     autoSuspend: true,
     suspendTimeoutMinutes: 15,
     suspendAggressiveness: 'balanced',
+    suspendTimeoutCustomized: false,
     memoryPressureThresholdPercent: 80,
     neverSuspendPinned: true,
     neverSuspendMedia: true,

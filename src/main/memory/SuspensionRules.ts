@@ -28,12 +28,11 @@ export class SuspensionRules {
     settings: BrowserSettings,
     underPressure: boolean
   ): number {
-    // User's explicit suspend timeout takes precedence; aggressiveness adjusts defaults
     const aggressivenessDefault = (AGGRESSIVENESS_TIMEOUTS[settings.suspendAggressiveness ?? 'balanced'] ?? 15) * 60 * 1000;
-    const userTimeoutMs = settings.suspendTimeoutMinutes * 60 * 1000;
+    const userTimeoutMs = (settings.suspendTimeoutMinutes ?? 15) * 60 * 1000;
 
-    // If user has set suspendTimeoutMinutes explicitly (non-default), use it; otherwise use aggressiveness
-    let baseTimeout = userTimeoutMs;
+    // Explicit custom timeout overrides aggressiveness preset default
+    let baseTimeout = settings.suspendTimeoutCustomized ? userTimeoutMs : aggressivenessDefault;
 
     if (underPressure) {
       const reduction = PRESSURE_TIMEOUT_REDUCTION[settings.suspendAggressiveness ?? 'balanced'] ?? 0.25;
@@ -123,6 +122,10 @@ export class SuspensionRules {
       return { eligible: false, reason: 'Currently active tab' };
     }
 
+    if (tab.state === 'ACTIVE' || tab.state === 'IDLE') {
+      return { eligible: false, reason: 'Tab must be suspended before it can be hibernated' };
+    }
+
     if (tab.state === 'HIBERNATED') {
       return { eligible: false, reason: 'Already hibernated' };
     }
@@ -173,7 +176,7 @@ export class SuspensionRules {
 
     for (const tab of tabs) {
       if (tab.state === 'SUSPENDED' || tab.state === 'HIBERNATED') continue;
-      if (tab.url.startsWith('orca://')) continue;
+      if (tab.url.startsWith('orca://') || tab.url.startsWith('about:')) continue;
 
       const lastActive = Math.max(tab.lastAccessedAt, tab.lastInteractionAt ?? 0);
       const inactiveForMs = now - lastActive;
