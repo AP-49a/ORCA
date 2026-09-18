@@ -227,6 +227,11 @@ export function useBrowserStore() {
     return api.restoreTab(tabId);
   };
 
+  const reopenClosedTab = async () => {
+    if (!api) return;
+    return api.reopenClosedTab();
+  };
+
   const setZoom = async (tabId: string, zoomLevel: number) => {
     if (!api) return;
     return api.setZoom(tabId, zoomLevel);
@@ -372,6 +377,7 @@ export function useBrowserStore() {
     togglePinTab,
     toggleMuteTab,
     duplicateTab,
+    reopenClosedTab,
     suspendTab,
     hibernateTab,
     restoreTab,

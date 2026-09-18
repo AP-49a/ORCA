@@ -17,6 +17,7 @@ export const IPC_CHANNELS = {
   TAB_RESTORE: 'tab:restore',
   TAB_SET_ZOOM: 'tab:set-zoom',
   TAB_KEEP_AWAKE: 'tab:keep-awake',
+  TAB_REOPEN_CLOSED: 'tab:reopen-closed',
   
   // Workspaces
   WORKSPACE_LIST: 'workspace:list',

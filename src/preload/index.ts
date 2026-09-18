@@ -31,6 +31,7 @@ export interface OrcaAPI {
   hibernateTab: (tabId: string) => Promise<void>;
   restoreTab: (tabId: string) => Promise<void>;
   setZoom: (tabId: string, zoomLevel: number) => Promise<void>;
+  reopenClosedTab: () => Promise<Tab | null>;
 
   // Workspaces
   listWorkspaces: () => Promise<Workspace[]>;
@@ -122,6 +123,7 @@ const api: OrcaAPI = {
   restoreTab: (tabId) => ipcRenderer.invoke(IPC_CHANNELS.TAB_RESTORE, tabId),
   setZoom: (tabId, zoomLevel) => ipcRenderer.invoke(IPC_CHANNELS.TAB_SET_ZOOM, tabId, zoomLevel),
   setTabKeepAwake: (tabId, keepAwake) => ipcRenderer.invoke(IPC_CHANNELS.TAB_KEEP_AWAKE, tabId, keepAwake),
+  reopenClosedTab: () => ipcRenderer.invoke(IPC_CHANNELS.TAB_REOPEN_CLOSED),
 
   // Workspaces
   listWorkspaces: () => ipcRenderer.invoke(IPC_CHANNELS.WORKSPACE_LIST),

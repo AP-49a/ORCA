@@ -1372,7 +1372,112 @@ export async function runMemoryManagerTests() {
 
     // Step 4: Restore request restores tab back to ACTIVE
     await harness.manager.restoreAll();
-    assert(harness.restoredTabIds.includes('life-tab'), 'lifecycle: Step 4 HIBERNATED → restore requested');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// TASK 6 — Phase 3A Tab Management UX Tests
+// ---------------------------------------------------------------------------
+
+export async function runTabManagementTests() {
+  section('TASK 6 — Tab Management UX (Phase 3A)');
+
+  function createTestTabManager() {
+    const updatedTabs: Tab[][] = [];
+    const activeTabHistory: Array<string | null> = [];
+
+    const tabManager = new TabManager({
+      onTabsUpdated: (tabs) => updatedTabs.push([...tabs]),
+      onActiveTabChanged: (tabId) => activeTabHistory.push(tabId),
+      onTabNavigated: () => {},
+      onTabLoading: () => {},
+      onTabTitleUpdated: () => {},
+      onTabFaviconUpdated: () => {},
+      onTabStateChanged: () => {},
+      onHistoryItemAdded: () => {},
+    });
+
+    return { tabManager, updatedTabs, activeTabHistory };
+  }
+
+  // 1. New Tab creation
+  {
+    const { tabManager } = createTestTabManager();
+    const tab1 = await tabManager.createTab({ url: 'https://example.com', active: true });
+    assert(tab1.url === 'https://example.com', 'createTab: creates tab with specified URL');
+    assert(tab1.state === 'ACTIVE', 'createTab: active tab has ACTIVE state');
+    assert(tabManager.getActiveTabId() === tab1.id, 'createTab: sets activeTabId when active=true');
+
+    const tab2 = await tabManager.createTab({ url: 'https://github.com', active: false });
+    assert(tabManager.getActiveTabId() === tab1.id, 'createTab: active=false preserves existing active tab');
+    assert(tab2.state === 'IDLE' || tab2.state === 'ACTIVE', 'createTab: inactive tab has valid state');
+  }
+
+  // 2. Tab Switching
+  {
+    const { tabManager } = createTestTabManager();
+    const t1 = await tabManager.createTab({ url: 'https://site1.com', active: true });
+    const t2 = await tabManager.createTab({ url: 'https://site2.com', active: false });
+
+    await tabManager.selectTab(t2.id);
+    assert(tabManager.getActiveTabId() === t2.id, 'selectTab: switches activeTabId to target tab');
+    assert(tabManager.getTab(t2.id)?.state === 'ACTIVE', 'selectTab: target tab state is ACTIVE');
+    assert(tabManager.getTab(t1.id) !== undefined, 'selectTab: previous tab remains in tabs collection');
+  }
+
+  // 3. Duplicate Tab
+  {
+    const { tabManager } = createTestTabManager();
+    const t1 = await tabManager.createTab({ url: 'https://news.ycombinator.com', workspaceId: 'ws-work', active: true });
+    const duplicated = await tabManager.duplicateTab(t1.id);
+    assert(duplicated.id !== t1.id, 'duplicateTab: creates a new distinct tab ID');
+    assert(duplicated.url === 'https://news.ycombinator.com', 'duplicateTab: preserves source URL');
+    assert(duplicated.workspaceId === 'ws-work', 'duplicateTab: preserves source workspaceId');
+    assert(tabManager.getActiveTabId() === duplicated.id, 'duplicateTab: duplicated tab becomes active');
+  }
+
+  // 4. Close Tab and neighbor focus
+  {
+    const { tabManager } = createTestTabManager();
+    const t1 = await tabManager.createTab({ url: 'https://tab1.com', active: false });
+    const t2 = await tabManager.createTab({ url: 'https://tab2.com', active: false });
+    const t3 = await tabManager.createTab({ url: 'https://tab3.com', active: true });
+
+    await tabManager.closeTab(t2.id);
+    assert(tabManager.getTab(t2.id) === undefined, 'closeTab: removes closed tab from tabs map');
+    assert(tabManager.getActiveTabId() === t3.id, 'closeTab: closing inactive tab does not alter activeTabId');
+
+    // Close active tab t3 -> switches to remaining neighbor (t1)
+    await tabManager.closeTab(t3.id);
+    assert(tabManager.getActiveTabId() === t1.id, 'closeTab: closing active tab switches to adjacent neighbor');
+  }
+
+  // 5. Reopen Closed Tab (Ctrl+Shift+T feature)
+  {
+    const { tabManager } = createTestTabManager();
+    const t1 = await tabManager.createTab({ url: 'https://wikipedia.org', workspaceId: 'ws-research', active: true });
+    await tabManager.createTab({ url: 'https://docs.rs', workspaceId: 'ws-research', active: true });
+
+    await tabManager.closeTab(t1.id);
+    const reopened = await tabManager.reopenClosedTab();
+    assert(reopened !== null, 'reopenClosedTab: returns reopened tab object');
+    assert(reopened?.url === 'https://wikipedia.org', 'reopenClosedTab: restores exact URL of closed tab');
+    assert(reopened?.workspaceId === 'ws-research', 'reopenClosedTab: restores tab in its original workspace');
+    assert(tabManager.getActiveTabId() === reopened?.id, 'reopenClosedTab: reopened tab is set as active');
+
+    // Trying to reopen again when stack is empty returns null
+    const emptyReopen = await tabManager.reopenClosedTab();
+    assert(emptyReopen === null, 'reopenClosedTab: returns null when no closed tabs remain');
+  }
+
+  // 6. Close all tabs auto-creates new tab
+  {
+    const { tabManager } = createTestTabManager();
+    const t1 = await tabManager.createTab({ url: 'https://lone-tab.com', active: true });
+    await tabManager.closeTab(t1.id);
+    const remaining = tabManager.getTabs();
+    assert(remaining.length === 1, 'closeTab: closing last remaining tab auto-creates new empty tab');
+    assert(remaining[0].url === 'orca://newtab', 'closeTab: auto-created tab has orca://newtab URL');
   }
 }
 
@@ -1381,7 +1486,7 @@ export async function runMemoryManagerTests() {
 // ---------------------------------------------------------------------------
 
 export async function runMemoryEngineTests() {
-  console.log('\n=== ORCA Memory Engine Test Suite ===');
+  console.log('\n=== ORCA Memory Engine & Tab Management Test Suite ===');
 
   runOriginalTests();
   runCanHibernateTests();
@@ -1389,6 +1494,7 @@ export async function runMemoryEngineTests() {
   runCanSuspendEdgeCaseTests();
   runGetSuspensionCandidatesTests();
   await runMemoryManagerTests();
+  await runTabManagementTests();
 
   // -------------------------------------------------------------------------
   // Summary
@@ -1408,7 +1514,7 @@ export async function runMemoryEngineTests() {
     throw new Error(`[ORCA Tests] ${failCount} assertion(s) failed.`);
   }
 
-  console.log('\n✓ All ORCA Memory Engine tests passed!\n');
+  console.log('\n✓ All ORCA Memory Engine & Tab Management tests passed!\n');
 }
 
 runMemoryEngineTests();

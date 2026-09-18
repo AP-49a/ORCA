@@ -18,15 +18,85 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'q') {
+      // Ctrl+Shift+Q: Close Window
+      if (event.ctrlKey && event.shiftKey && !event.altKey && event.key.toLowerCase() === 'q') {
         event.preventDefault();
         window.orcaAPI?.closeWindow();
+        return;
+      }
+
+      // Ctrl+Shift+T: Reopen closed tab
+      if (event.ctrlKey && event.shiftKey && !event.altKey && event.key.toLowerCase() === 't') {
+        event.preventDefault();
+        store.reopenClosedTab();
+        return;
+      }
+
+      // Ctrl+Shift+Tab: Previous tab
+      if (event.ctrlKey && event.shiftKey && !event.altKey && event.key === 'Tab') {
+        event.preventDefault();
+        const currentTabs = store.activeWorkspaceTabs;
+        if (currentTabs.length > 1) {
+          const currentIndex = currentTabs.findIndex((t) => t.id === store.activeTabId);
+          const prevIndex = currentIndex <= 0 ? currentTabs.length - 1 : currentIndex - 1;
+          store.selectTab(currentTabs[prevIndex].id);
+        }
+        return;
+      }
+
+      // Ctrl+Tab: Next tab
+      if (event.ctrlKey && !event.shiftKey && !event.altKey && event.key === 'Tab') {
+        event.preventDefault();
+        const currentTabs = store.activeWorkspaceTabs;
+        if (currentTabs.length > 1) {
+          const currentIndex = currentTabs.findIndex((t) => t.id === store.activeTabId);
+          const nextIndex = currentIndex === -1 || currentIndex >= currentTabs.length - 1 ? 0 : currentIndex + 1;
+          store.selectTab(currentTabs[nextIndex].id);
+        }
+        return;
+      }
+
+      // Ctrl+T: New tab
+      if (event.ctrlKey && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 't') {
+        event.preventDefault();
+        store.createTab();
+        return;
+      }
+
+      // Ctrl+W: Close active tab
+      if (event.ctrlKey && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'w') {
+        event.preventDefault();
+        if (store.activeTabId) {
+          store.closeTab(store.activeTabId);
+        }
+        return;
+      }
+
+      // Ctrl+1 to Ctrl+8: Switch to tab 1-8
+      if (event.ctrlKey && !event.shiftKey && !event.altKey && event.key >= '1' && event.key <= '8') {
+        const targetIndex = parseInt(event.key, 10) - 1;
+        const targetTab = store.activeWorkspaceTabs[targetIndex];
+        if (targetTab) {
+          event.preventDefault();
+          store.selectTab(targetTab.id);
+        }
+        return;
+      }
+
+      // Ctrl+9: Switch to last tab
+      if (event.ctrlKey && !event.shiftKey && !event.altKey && event.key === '9') {
+        const currentTabs = store.activeWorkspaceTabs;
+        if (currentTabs.length > 0) {
+          event.preventDefault();
+          store.selectTab(currentTabs[currentTabs.length - 1].id);
+        }
+        return;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [store.activeWorkspaceTabs, store.activeTabId, store.createTab, store.closeTab, store.selectTab, store.reopenClosedTab]);
 
   useEffect(() => {
     const theme = store.settings.theme;

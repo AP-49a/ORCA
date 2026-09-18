@@ -52,6 +52,8 @@ export class TabManager {
   private isPanelOverlayActive = false;
   // Maps tabId -> renderer process PID for real memory correlation
   private tabPidMap: Map<string, number> = new Map();
+  // Recently-closed tab stack for Ctrl+Shift+T (capped at 20)
+  private closedTabsHistory: Array<{ url: string; title: string; workspaceId: string; favicon?: string | null }> = [];
 
   constructor(callbacks: TabManagerCallbacks) {
     this.callbacks = callbacks;
@@ -639,6 +641,19 @@ export class TabManager {
     const tab = this.tabs.get(tabId);
     if (!tab) return;
 
+    // Save to recently-closed stack (skip internal new-tab pages)
+    if (tab.url && tab.url !== 'orca://newtab') {
+      this.closedTabsHistory.push({
+        url: tab.url,
+        title: tab.title || tab.url,
+        workspaceId: tab.workspaceId,
+        favicon: tab.favicon ?? null,
+      });
+      if (this.closedTabsHistory.length > 20) {
+        this.closedTabsHistory.shift();
+      }
+    }
+
     const view = this.views.get(tabId);
     if (view) {
       this.detachViewFromWindow(view);
@@ -684,6 +699,12 @@ export class TabManager {
     }
     this.tabs = newMap;
     this.notifyTabsUpdated();
+  }
+
+  public async reopenClosedTab(): Promise<Tab | null> {
+    const entry = this.closedTabsHistory.pop();
+    if (!entry) return null;
+    return this.createTab({ url: entry.url, workspaceId: entry.workspaceId, active: true });
   }
 
   public restoreSessionTabs(savedTabs: Tab[], activeTabId: string | null): void {

@@ -85,6 +85,10 @@ export function registerIpcHandlers(
     return tabManager.setKeepAwake(tabId, keepAwake);
   });
 
+  ipcMain.handle(IPC_CHANNELS.TAB_REOPEN_CLOSED, async () => {
+    return tabManager.reopenClosedTab();
+  });
+
   // --- Workspaces ---
   ipcMain.handle(IPC_CHANNELS.WORKSPACE_LIST, async () => {
     return storageManager.getWorkspaces();
