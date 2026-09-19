@@ -228,6 +228,82 @@ export class TabManager {
     return this.activeTabId ? this.tabs.get(this.activeTabId) : undefined;
   }
 
+  private activeWorkspaceId: string = 'ws-personal';
+
+  public getActiveWorkspaceId(): string {
+    return this.activeWorkspaceId;
+  }
+
+  public setActiveWorkspaceId(workspaceId: string): void {
+    this.activeWorkspaceId = workspaceId;
+  }
+
+  public async switchWorkspace(workspaceId: string): Promise<void> {
+    this.activeWorkspaceId = workspaceId;
+    const workspaceTabs = this.getTabs().filter((t) => t.workspaceId === workspaceId);
+    if (workspaceTabs.length > 0) {
+      await this.selectTab(workspaceTabs[0].id);
+    } else {
+      await this.createTab({ url: 'orca://newtab', workspaceId, active: true });
+    }
+  }
+
+  /**
+   * Restores a previously saved browser session from serializable tab metadata.
+   * Ensures that no stale Chromium process mappings are restored and only the
+   * active tab creates an active WebContentsView immediately.
+   */
+  public async restoreSessionTabs(
+    tabs: Tab[],
+    activeTabId: string | null,
+    activeWorkspaceId?: string
+  ): Promise<void> {
+    // Clear any previous in-memory state
+    for (const view of this.views.values()) {
+      this.detachViewFromWindow(view);
+      try {
+        (view.webContents as any)?.close?.();
+      } catch {}
+    }
+    this.tabs.clear();
+    this.views.clear();
+    this.tabPidMap.clear();
+
+    if (activeWorkspaceId) {
+      this.activeWorkspaceId = activeWorkspaceId;
+    }
+
+    if (!tabs || tabs.length === 0) {
+      await this.createTab({ url: 'orca://newtab', workspaceId: this.activeWorkspaceId, active: true });
+      return;
+    }
+
+    // Populate tabs into in-memory collection
+    for (const tab of tabs) {
+      this.tabs.set(tab.id, {
+        ...tab,
+        loading: false,
+        canGoBack: false,
+        canGoForward: false,
+      });
+    }
+
+    // Determine target active tab
+    const targetTabId = (activeTabId && this.tabs.has(activeTabId))
+      ? activeTabId
+      : tabs[0].id;
+
+    // Select the active tab to instantiate its WebContentsView
+    await this.selectTab(targetTabId);
+
+    const activeTab = this.tabs.get(targetTabId);
+    if (activeTab) {
+      this.activeWorkspaceId = activeTab.workspaceId;
+    }
+
+    this.notifyTabsUpdated();
+  }
+
   /**
    * Creates a new browser tab with its own WebContentsView
    */
@@ -238,6 +314,7 @@ export class TabManager {
     pinned?: boolean;
     searchEngineUrl?: string;
   }): Promise<Tab> {
+
     const id = `tab-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     const rawUrl = options?.url || 'orca://newtab';
     const url = rawUrl === 'orca://newtab' ? rawUrl : NavigationManager.normalizeInput(rawUrl, options?.searchEngineUrl);
@@ -778,30 +855,8 @@ export class TabManager {
     return this.createTab({ url: entry.url, workspaceId: entry.workspaceId, active: true });
   }
 
-  public restoreSessionTabs(savedTabs: Tab[], activeTabId: string | null): void {
-    this.tabs.clear();
-    for (const t of savedTabs) {
-      // Inactive tabs restore in suspended state so startup is instant and zero RAM overhead!
-      const isSavedActive = t.id === activeTabId;
-      const state: TabState = isSavedActive ? 'ACTIVE' : (t.state === 'HIBERNATED' ? 'HIBERNATED' : 'SUSPENDED');
-      this.tabs.set(t.id, {
-        ...t,
-        state,
-        loading: false,
-      });
-    }
-
-    if (activeTabId && this.tabs.has(activeTabId)) {
-      this.selectTab(activeTabId);
-    } else if (this.tabs.size > 0) {
-      const first = Array.from(this.tabs.values())[0];
-      this.selectTab(first.id);
-    } else {
-      this.createTab({ url: 'orca://newtab', active: true });
-    }
-  }
-
   private notifyTabsUpdated() {
     this.callbacks.onTabsUpdated(this.getTabs());
   }
 }
+

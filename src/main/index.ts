@@ -19,11 +19,50 @@ let windowManager: BrowserWindowManager;
 let memoryManager: MemoryManager;
 let downloadManager: DownloadManager;
 let mainWindow: BrowserWindow | null = null;
+let isSessionRestored = false;
+let saveSessionDebounceTimer: NodeJS.Timeout | null = null;
 
 function sendToRenderer(channel: string, ...args: any[]) {
   if (mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents) {
     mainWindow.webContents.send(channel, ...args);
   }
+}
+
+function saveCurrentSession() {
+  if (!storageManager || !tabManager) return;
+  const tabs = tabManager.getTabs();
+  const activeTabId = tabManager.getActiveTabId();
+  const activeWorkspaceId = tabManager.getActiveWorkspaceId();
+  const workspaces = storageManager.getWorkspaces();
+  const settings = storageManager.getSettings();
+
+  storageManager.saveSession({
+    version: StorageManager.CURRENT_SESSION_VERSION,
+    timestamp: Date.now(),
+    workspaces,
+    activeWorkspaceId,
+    tabs,
+    activeTabId,
+    settings,
+  });
+}
+
+function scheduleSaveSession() {
+  if (saveSessionDebounceTimer) {
+    clearTimeout(saveSessionDebounceTimer);
+  }
+  saveSessionDebounceTimer = setTimeout(() => {
+    saveSessionDebounceTimer = null;
+    saveCurrentSession();
+  }, 400);
+}
+
+function flushSession() {
+  if (saveSessionDebounceTimer) {
+    clearTimeout(saveSessionDebounceTimer);
+    saveSessionDebounceTimer = null;
+  }
+  saveCurrentSession();
 }
 
 async function initializeApp() {
@@ -37,26 +76,30 @@ async function initializeApp() {
   tabManager = new TabManager({
     onTabsUpdated: (tabs: Tab[]) => {
       sendToRenderer(IPC_CHANNELS.EVENT_TABS_UPDATED, tabs);
-      saveCurrentSession();
+      scheduleSaveSession();
     },
     onActiveTabChanged: (activeTabId: string | null) => {
       sendToRenderer(IPC_CHANNELS.EVENT_ACTIVE_TAB_CHANGED, activeTabId);
-      saveCurrentSession();
+      scheduleSaveSession();
     },
     onTabNavigated: (tabId: string, url: string) => {
       sendToRenderer(IPC_CHANNELS.EVENT_TAB_NAVIGATED, { tabId, url });
+      scheduleSaveSession();
     },
     onTabLoading: (tabId: string, loading: boolean) => {
       sendToRenderer(IPC_CHANNELS.EVENT_TAB_LOADING, { tabId, loading });
     },
     onTabTitleUpdated: (tabId: string, title: string) => {
       sendToRenderer(IPC_CHANNELS.EVENT_TAB_TITLE_UPDATED, { tabId, title });
+      scheduleSaveSession();
     },
     onTabFaviconUpdated: (tabId: string, favicon: string) => {
       sendToRenderer(IPC_CHANNELS.EVENT_TAB_FAVICON_UPDATED, { tabId, favicon });
+      scheduleSaveSession();
     },
     onTabStateChanged: (tabId: string, state: TabState) => {
       sendToRenderer(IPC_CHANNELS.EVENT_TAB_STATE_CHANGED, { tabId, state });
+      scheduleSaveSession();
     },
     onHistoryItemAdded: (url: string, title: string, favicon?: string) => {
       if (!url.startsWith('orca://') && !url.startsWith('about:')) {
@@ -104,38 +147,25 @@ async function initializeApp() {
   // Create Window
   mainWindow = await windowManager.createMainWindow();
 
-  // Restore previous session or create default tab
-  const savedSession = storageManager.getSession();
-  if (settings.restoreSessionOnStartup && savedSession && savedSession.tabs.length > 0) {
-    tabManager.restoreSessionTabs(savedSession.tabs, savedSession.activeTabId);
-  } else {
-    await tabManager.createTab({ url: 'orca://newtab', active: true });
+  // Restore previous session or create default tab exactly once per application startup
+  if (!isSessionRestored) {
+    isSessionRestored = true;
+    const savedSession = storageManager.getSession();
+    if (settings.restoreSessionOnStartup && savedSession && savedSession.tabs && savedSession.tabs.length > 0) {
+      await tabManager.restoreSessionTabs(savedSession.tabs, savedSession.activeTabId, savedSession.activeWorkspaceId);
+    } else {
+      await tabManager.createTab({ url: 'orca://newtab', active: true });
+    }
   }
 
   // Start background memory optimization engine
   memoryManager.start();
 }
 
-function saveCurrentSession() {
-  if (!storageManager || !tabManager) return;
-  const tabs = tabManager.getTabs();
-  const activeTabId = tabManager.getActiveTabId();
-  const workspaces = storageManager.getWorkspaces();
-  const settings = storageManager.getSettings();
-
-  storageManager.saveSession({
-    workspaces,
-    activeWorkspaceId: workspaces[0]?.id || 'ws-personal',
-    tabs,
-    activeTabId,
-    settings,
-  });
-}
-
 app.whenReady().then(initializeApp);
 
 app.on('window-all-closed', () => {
-  saveCurrentSession();
+  flushSession();
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -145,7 +175,7 @@ app.on('before-quit', () => {
   if (memoryManager) {
     memoryManager.stop();
   }
-  saveCurrentSession();
+  flushSession();
 });
 
 app.on('activate', async () => {
@@ -153,3 +183,4 @@ app.on('activate', async () => {
     await initializeApp();
   }
 });
+

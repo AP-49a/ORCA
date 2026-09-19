@@ -168,11 +168,14 @@ export interface BrowserSettings {
 }
 
 export interface SessionData {
+  version: number;
+  timestamp: number;
   workspaces: Workspace[];
   activeWorkspaceId: string;
   tabs: Tab[];
   activeTabId: string | null;
-  settings: BrowserSettings;
+  settings?: BrowserSettings;
 }
+
 
 

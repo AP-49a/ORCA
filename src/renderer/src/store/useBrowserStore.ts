@@ -92,11 +92,30 @@ export function useBrowserStore() {
     // Register event subscriptions
     const unsubTabs = api.onTabsUpdated((updatedTabs) => {
       setTabs(updatedTabs);
+      setActiveTabId((currentActiveId) => {
+        if (currentActiveId) {
+          const matchingTab = updatedTabs.find((t) => t.id === currentActiveId);
+          if (matchingTab) {
+            setActiveWorkspaceId(matchingTab.workspaceId);
+          }
+        }
+        return currentActiveId;
+      });
     });
 
     const unsubActiveTab = api.onActiveTabChanged((tabId) => {
       setActiveTabId(tabId);
+      if (tabId) {
+        setTabs((currentTabs) => {
+          const matchingTab = currentTabs.find((t) => t.id === tabId);
+          if (matchingTab) {
+            setActiveWorkspaceId(matchingTab.workspaceId);
+          }
+          return currentTabs;
+        });
+      }
     });
+
 
     const unsubMemory = api.onMemoryStatsUpdated((stats) => {
       setMemoryStats(stats);

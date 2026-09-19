@@ -127,14 +127,9 @@ export function registerIpcHandlers(
   });
 
   ipcMain.handle(IPC_CHANNELS.WORKSPACE_SWITCH, async (_, workspaceId: string) => {
-    const tabs = tabManager.getTabs().filter(t => t.workspaceId === workspaceId);
-    if (tabs.length > 0) {
-      await tabManager.selectTab(tabs[0].id);
-    } else {
-      // Create a tab in this workspace
-      await tabManager.createTab({ url: 'orca://newtab', workspaceId, active: true });
-    }
+    return tabManager.switchWorkspace(workspaceId);
   });
+
 
   // --- Memory ---
   ipcMain.handle(IPC_CHANNELS.MEMORY_GET_STATS, async () => {

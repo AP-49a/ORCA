@@ -1,8 +1,13 @@
-import { Tab, BrowserSettings, Workspace, MemoryStats } from '../src/shared/types';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import { Tab, BrowserSettings, Workspace, MemoryStats, SessionData } from '../src/shared/types';
 import { SuspensionRules } from '../src/main/memory/SuspensionRules';
 import { MemoryManager, MemoryManagerDelegate } from '../src/main/memory/MemoryManager';
 import { NavigationManager } from '../src/main/browser/NavigationManager';
 import { TabManager } from '../src/main/browser/TabManager';
+import { StorageManager } from '../src/main/persistence/StorageManager';
+
 
 // ---------------------------------------------------------------------------
 // Test infrastructure
@@ -1656,6 +1661,207 @@ async function runCoreNavigationTests() {
 }
 
 // ---------------------------------------------------------------------------
+// TASK 8 — Phase 3C Session Persistence Tests
+// ---------------------------------------------------------------------------
+
+async function runSessionPersistenceTests() {
+  section('TASK 8 — Session Persistence (Phase 3C)');
+
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'orca-session-test-'));
+
+  try {
+    const storage = new StorageManager(tempDir);
+
+    const testWorkspaces: Workspace[] = [
+      { id: 'ws-personal', name: 'Personal', color: '#0284C7', icon: 'Compass', createdAt: 1000 },
+      { id: 'ws-research', name: 'Research', color: '#0D9488', icon: 'BookOpen', createdAt: 2000 },
+    ];
+
+    const testTabs: Tab[] = [
+      {
+        id: 'tab-1',
+        url: 'https://github.com',
+        title: 'GitHub',
+        favicon: 'https://github.com/favicon.ico',
+        createdAt: 1000,
+        lastAccessedAt: 5000,
+        state: 'ACTIVE',
+        workspaceId: 'ws-personal',
+        pinned: true,
+        muted: false,
+        loading: false,
+        canGoBack: false,
+        canGoForward: false,
+        estimatedMemoryMB: 150,
+        zoomLevel: 0,
+      },
+      {
+        id: 'tab-2',
+        url: 'https://youtube.com',
+        title: 'YouTube',
+        favicon: 'https://youtube.com/favicon.ico',
+        createdAt: 2000,
+        lastAccessedAt: 4000,
+        state: 'SUSPENDED',
+        workspaceId: 'ws-personal',
+        pinned: false,
+        muted: true,
+        loading: false,
+        canGoBack: false,
+        canGoForward: false,
+        estimatedMemoryMB: 80,
+        zoomLevel: 1,
+        lastSuspendedAt: 6000,
+        suspendCount: 1,
+      },
+      {
+        id: 'tab-3',
+        url: 'https://arxiv.org',
+        title: 'ArXiv',
+        createdAt: 3000,
+        lastAccessedAt: 3000,
+        state: 'HIBERNATED',
+        workspaceId: 'ws-research',
+        pinned: false,
+        muted: false,
+        loading: false,
+        canGoBack: false,
+        canGoForward: false,
+        estimatedMemoryMB: 30,
+        zoomLevel: 0,
+        lastHibernatedAt: 7000,
+      },
+    ];
+
+    // 1. Serialize session
+    const sessionToSave: SessionData = {
+      version: 1,
+      timestamp: Date.now(),
+      workspaces: testWorkspaces,
+      activeWorkspaceId: 'ws-personal',
+      tabs: testTabs,
+      activeTabId: 'tab-1',
+    };
+
+    storage.saveSession(sessionToSave);
+    const sessionFilePath = path.join(tempDir, 'session.json');
+    assert(fs.existsSync(sessionFilePath), 'saveSession: session.json file is written to disk');
+
+    const fileContent = JSON.parse(fs.readFileSync(sessionFilePath, 'utf-8'));
+    assert(fileContent.version === 1, 'saveSession: serialized data contains schema version 1');
+    assert(typeof fileContent.timestamp === 'number', 'saveSession: serialized data contains numeric timestamp');
+    assert(fileContent.activeWorkspaceId === 'ws-personal', 'saveSession: activeWorkspaceId is preserved');
+    assert(fileContent.activeTabId === 'tab-1', 'saveSession: activeTabId is preserved');
+    assert(fileContent.tabs.length === 3, 'saveSession: all 3 tabs are serialized');
+
+    // 2. Deserialize session
+    const loadedSession = storage.getSession();
+    assert(loadedSession !== null, 'getSession: successfully deserializes saved session');
+    assert(loadedSession?.version === 1, 'getSession: deserialized version is 1');
+    assert(loadedSession?.workspaces.length === 2, 'getSession: restores 2 workspaces');
+    assert(loadedSession?.tabs.length === 3, 'getSession: restores 3 tabs');
+
+    // 3. Restore workspaces
+    assert(loadedSession?.workspaces[0].name === 'Personal', 'restoreWorkspaces: first workspace is Personal');
+    assert(loadedSession?.workspaces[1].name === 'Research', 'restoreWorkspaces: second workspace is Research');
+
+    // 4. Restore tabs metadata
+    const restoredTab1 = loadedSession?.tabs.find((t) => t.id === 'tab-1');
+    assert(restoredTab1?.url === 'https://github.com', 'restoreTabs: tab-1 URL is restored');
+    assert(restoredTab1?.title === 'GitHub', 'restoreTabs: tab-1 title is restored');
+    assert(restoredTab1?.pinned === true, 'restoreTabs: tab-1 pinned state is true');
+    assert(restoredTab1?.loading === false, 'restoreTabs: transient loading state is initialized to false');
+
+    // 5. Restore tab order
+    assert(loadedSession?.tabs[0].id === 'tab-1', 'restoreTabOrder: tab index 0 is tab-1');
+    assert(loadedSession?.tabs[1].id === 'tab-2', 'restoreTabOrder: tab index 1 is tab-2');
+    assert(loadedSession?.tabs[2].id === 'tab-3', 'restoreTabOrder: tab index 2 is tab-3');
+
+    // 6. Restore active workspace
+    assert(loadedSession?.activeWorkspaceId === 'ws-personal', 'restoreActiveWorkspace: active workspace matches saved session');
+
+    // 7. TabManager session restoration integration
+    {
+      const { tabManager } = createTestTabManager();
+      await tabManager.restoreSessionTabs(loadedSession!.tabs, loadedSession!.activeTabId, loadedSession!.activeWorkspaceId);
+
+      assert(tabManager.getTabs().length === 3, 'TabManager.restoreSessionTabs: restores all 3 tabs into manager');
+      assert(tabManager.getActiveTabId() === 'tab-1', 'TabManager.restoreSessionTabs: sets active tab to tab-1');
+      assert(tabManager.getTab('tab-1')?.state === 'ACTIVE', 'TabManager.restoreSessionTabs: active tab has ACTIVE state');
+      assert(tabManager.getActiveWorkspaceId() === 'ws-personal', 'TabManager.restoreSessionTabs: sets activeWorkspaceId');
+
+      // 8. Suspended / hibernated tabs restore from metadata
+      const tab2 = tabManager.getTab('tab-2');
+      assert(tab2?.state === 'SUSPENDED', 'TabManager.restoreSessionTabs: suspended tab maintains SUSPENDED state');
+      const tab3 = tabManager.getTab('tab-3');
+      assert(tab3?.state === 'HIBERNATED', 'TabManager.restoreSessionTabs: hibernated tab maintains HIBERNATED state');
+
+      // 9. Selecting suspended tab lazily restores it
+      await tabManager.selectTab('tab-2');
+      assert(tabManager.getActiveTabId() === 'tab-2', 'TabManager.selectTab: selecting suspended tab switches activeTabId');
+      assert(tabManager.getTab('tab-2')?.state === 'ACTIVE', 'TabManager.selectTab: restores suspended tab to ACTIVE state on selection');
+    }
+
+    // 10. Fallback on empty / missing session
+    {
+      const emptyDir = fs.mkdtempSync(path.join(os.tmpdir(), 'orca-empty-session-'));
+      const emptyStorage = new StorageManager(emptyDir);
+      assert(emptyStorage.getSession() === null, 'getSession: returns null when session.json is missing');
+
+      const { tabManager } = createTestTabManager();
+      await tabManager.restoreSessionTabs([], null);
+      assert(tabManager.getTabs().length === 1, 'restoreSessionTabs: empty session creates 1 default tab');
+      assert(tabManager.getTabs()[0].url === 'orca://newtab', 'restoreSessionTabs: default tab is orca://newtab');
+      fs.rmSync(emptyDir, { recursive: true, force: true });
+    }
+
+    // 11. Fallback on malformed session JSON
+    {
+      const corruptDir = fs.mkdtempSync(path.join(os.tmpdir(), 'orca-corrupt-session-'));
+      const corruptStorage = new StorageManager(corruptDir);
+      fs.writeFileSync(path.join(corruptDir, 'session.json'), '{ invalid json @@');
+      assert(corruptStorage.getSession() === null, 'getSession: handles malformed JSON without crashing and returns null');
+      fs.rmSync(corruptDir, { recursive: true, force: true });
+    }
+
+    // 12. Version validation
+    {
+      const oldVersionDir = fs.mkdtempSync(path.join(os.tmpdir(), 'orca-old-version-'));
+      const oldStorage = new StorageManager(oldVersionDir);
+      fs.writeFileSync(path.join(oldVersionDir, 'session.json'), JSON.stringify({ version: 0, tabs: [] }));
+      assert(oldStorage.getSession() === null, 'getSession: rejects incompatible version 0');
+      fs.rmSync(oldVersionDir, { recursive: true, force: true });
+    }
+
+    // 13. Session persistence does not contain runtime Electron objects
+    {
+      const rawText = fs.readFileSync(sessionFilePath, 'utf-8');
+      assert(!rawText.includes('webContents'), 'safety: serialized session does not contain webContents references');
+      assert(!rawText.includes('BrowserWindow'), 'safety: serialized session does not contain BrowserWindow references');
+      assert(!rawText.includes('processId'), 'safety: serialized session does not contain processId references');
+    }
+
+    // 14. Clear session
+    {
+      storage.clearSession();
+      assert(storage.getSession() === null, 'clearSession: session file is cleared and getSession returns null');
+    }
+
+    // 15. Duplicate restoration protection
+    {
+      const { tabManager } = createTestTabManager();
+      await tabManager.restoreSessionTabs(testTabs, 'tab-1');
+      assert(tabManager.getTabs().length === 3, 'restoreSessionTabs: first restoration populates 3 tabs');
+      // Second call replaces cleanly rather than duplicating
+      await tabManager.restoreSessionTabs(testTabs, 'tab-1');
+      assert(tabManager.getTabs().length === 3, 'restoreSessionTabs: second restoration does not duplicate tabs');
+    }
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Main entry point
 // ---------------------------------------------------------------------------
 
@@ -1670,6 +1876,7 @@ export async function runMemoryEngineTests() {
   await runMemoryManagerTests();
   await runTabManagementTests();
   await runCoreNavigationTests();
+  await runSessionPersistenceTests();
 
   // -------------------------------------------------------------------------
   // Summary
@@ -1693,5 +1900,6 @@ export async function runMemoryEngineTests() {
 }
 
 runMemoryEngineTests();
+
 
 
