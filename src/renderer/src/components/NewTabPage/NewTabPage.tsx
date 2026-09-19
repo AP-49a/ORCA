@@ -88,7 +88,7 @@ export const NewTabPage: React.FC<NewTabPageProps> = ({
         {/* Central Search / Omnibox */}
         <form
           onSubmit={handleSearch}
-          className="w-full relative flex items-center shadow-[var(--modal-shadow)] rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--accent)] focus-within:border-[var(--accent)] focus-within:ring-4 focus-within:ring-[var(--accent-border)] transition-all p-1.5 mb-10"
+          className="w-full relative flex items-center shadow-[var(--modal-shadow)] rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--accent)] focus-within:border-[var(--accent)] focus-within:ring-4 focus-within:ring-[var(--accent-border)] transition-all duration-150 ease-out p-1.5 mb-10"
         >
           <div className="pl-4 pr-2 text-[var(--text-muted)]">
             <Search className="w-5 h-5" />
@@ -103,7 +103,7 @@ export const NewTabPage: React.FC<NewTabPageProps> = ({
           />
           <button
             type="submit"
-            className="px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition-colors shadow-xs"
+            className="px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] active:scale-95 text-white text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition-all duration-150 ease-out shadow-xs"
           >
             <span>Browse</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -122,12 +122,12 @@ export const NewTabPage: React.FC<NewTabPageProps> = ({
               <button
                 key={item.url}
                 onClick={() => onNavigate(item.url)}
-                className="flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-hover)] border border-[var(--border)] hover:border-[var(--accent-border)] transition-all group shadow-xs hover:shadow-md"
+                className="flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-hover)] border border-[var(--border)] hover:border-[var(--accent-border)] hover:-translate-y-0.5 active:scale-95 transition-all duration-150 ease-out group shadow-xs hover:shadow-md"
               >
-                <div className="w-10 h-10 rounded-lg bg-[var(--surface-subtle)] group-hover:bg-[var(--accent-subtle)] flex items-center justify-center font-mono font-bold text-xs text-[var(--text-primary)] group-hover:text-[var(--accent)] mb-2 transition-colors">
+                <div className="w-10 h-10 rounded-lg bg-[var(--surface-subtle)] group-hover:bg-[var(--accent-subtle)] flex items-center justify-center font-mono font-bold text-xs text-[var(--text-primary)] group-hover:text-[var(--accent)] mb-2 transition-colors duration-150">
                   {item.icon}
                 </div>
-                <span className="text-xs font-medium text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] truncate w-full text-center">
+                <span className="text-xs font-medium text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] truncate w-full text-center transition-colors duration-150">
                   {item.title}
                 </span>
               </button>

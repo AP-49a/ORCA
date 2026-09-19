@@ -37,14 +37,14 @@ export const DownloadsPopover: React.FC<DownloadsPopoverProps> = ({
             {downloads.some((d) => d.status === 'completed' || d.status === 'cancelled') && (
               <button
                 onClick={onClearCompleted}
-                className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium px-2 py-1 rounded hover:bg-[var(--surface-hover)] transition-colors"
+                className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] active:scale-95 font-medium px-2 py-1 rounded hover:bg-[var(--surface-hover)] transition-all duration-150 ease-out"
               >
                 Clear
               </button>
             )}
             <button
               onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-[var(--surface-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+              className="p-1.5 rounded-full hover:bg-[var(--surface-hover)] active:scale-95 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-150 ease-out"
             >
               <X className="w-4 h-4" />
             </button>
@@ -57,7 +57,7 @@ export const DownloadsPopover: React.FC<DownloadsPopoverProps> = ({
             <div className="text-center py-10 text-[var(--text-muted)] text-xs">No recent downloads.</div>
           ) : (
             downloads.map((dl) => (
-              <div key={dl.id} className="py-2.5 px-2 hover:bg-[var(--surface-hover)] rounded-xl transition-colors">
+              <div key={dl.id} className="py-2.5 px-2 hover:bg-[var(--surface-hover)] rounded-xl transition-all duration-150 ease-out">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center space-x-2 min-w-0 mr-2">
                     <FileText className="w-4 h-4 text-[var(--accent)] flex-shrink-0" />
@@ -69,7 +69,7 @@ export const DownloadsPopover: React.FC<DownloadsPopoverProps> = ({
                     {dl.status === 'progressing' && (
                       <button
                         onClick={() => onCancelDownload(dl.id)}
-                        className="p-1 text-[var(--text-muted)] hover:text-rose-500 rounded"
+                        className="p-1 text-[var(--text-muted)] hover:text-rose-500 active:scale-90 rounded transition-all duration-150 ease-out"
                         title="Cancel"
                       >
                         <Ban className="w-3.5 h-3.5" />
@@ -79,13 +79,13 @@ export const DownloadsPopover: React.FC<DownloadsPopoverProps> = ({
                       <>
                         <button
                           onClick={() => onOpenFile(dl.id)}
-                          className="px-2 py-0.5 text-[11px] font-semibold text-[var(--accent)] bg-[var(--accent-subtle)] hover:opacity-90 rounded"
+                          className="px-2 py-0.5 text-[11px] font-semibold text-[var(--accent)] bg-[var(--accent-subtle)] hover:opacity-90 active:scale-95 rounded transition-all duration-150 ease-out"
                         >
                           Open
                         </button>
                         <button
                           onClick={() => onShowInFolder(dl.id)}
-                          className="p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded"
+                          className="p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] active:scale-90 rounded transition-all duration-150 ease-out"
                           title="Show in folder"
                         >
                           <FolderOpen className="w-3.5 h-3.5" />

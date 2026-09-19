@@ -51,10 +51,10 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
           <button
             key={ws.id}
             onClick={() => onSwitchWorkspace(ws.id)}
-            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
+            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs font-semibold active:scale-95 transition-all duration-150 ease-out ${
               isActive
                 ? 'bg-[var(--accent-subtle)] text-[var(--accent)] shadow-xs border border-[var(--accent-border)]'
-                : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]'
+                : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)] border border-transparent'
             }`}
             title={`Switch to ${ws.name} Workspace`}
           >
@@ -65,7 +65,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
       })}
 
       {isCreating ? (
-        <form onSubmit={handleCreate} className="flex items-center space-x-1 bg-[var(--surface)] border border-[var(--border)] rounded-md px-2 py-0.5 shadow-xs">
+        <form onSubmit={handleCreate} className="flex items-center space-x-1 bg-[var(--surface)] border border-[var(--border)] rounded-md px-2 py-0.5 shadow-xs animate-popover-enter">
           <input
             type="text"
             placeholder="Workspace name..."
@@ -74,13 +74,13 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
             className="text-xs text-[var(--text-primary)] bg-transparent outline-none w-28 py-0.5"
             autoFocus
           />
-          <button type="submit" className="p-0.5 text-emerald-500 hover:opacity-80">
+          <button type="submit" className="p-0.5 text-emerald-500 hover:opacity-80 active:scale-90 transition-transform">
             <Check className="w-3 h-3" />
           </button>
           <button
             type="button"
             onClick={() => setIsCreating(false)}
-            className="p-0.5 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            className="p-0.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] active:scale-90 transition-transform"
           >
             <X className="w-3 h-3" />
           </button>
@@ -88,7 +88,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
       ) : (
         <button
           onClick={() => setIsCreating(true)}
-          className="p-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition-colors"
+          className="p-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] hover:scale-105 active:scale-95 transition-all duration-150 ease-out"
           title="New Workspace"
         >
           <Plus className="w-3.5 h-3.5" />

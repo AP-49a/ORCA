@@ -39,7 +39,7 @@ export const BookmarksModal: React.FC<BookmarksModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-[var(--surface-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+            className="p-1.5 rounded-full hover:bg-[var(--surface-hover)] active:scale-95 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-150 ease-out"
           >
             <X className="w-4 h-4" />
           </button>
@@ -54,7 +54,7 @@ export const BookmarksModal: React.FC<BookmarksModalProps> = ({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search bookmarks..."
-              className="w-full pl-8 pr-3 py-1.5 bg-[var(--surface-subtle)] border border-[var(--border)] rounded-xl text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none focus:border-[var(--accent)] select-text"
+              className="w-full pl-8 pr-3 py-1.5 bg-[var(--surface-subtle)] border border-[var(--border)] rounded-xl text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none focus:border-[var(--accent)] transition-all duration-150 ease-out select-text"
             />
           </div>
         </div>
@@ -67,7 +67,7 @@ export const BookmarksModal: React.FC<BookmarksModalProps> = ({
             filtered.map((b) => (
               <div
                 key={b.id}
-                className="flex items-center justify-between py-2 px-2 hover:bg-[var(--surface-hover)] rounded-xl transition-colors group"
+                className="flex items-center justify-between py-2 px-2 hover:bg-[var(--surface-hover)] active:scale-[0.99] rounded-xl transition-all duration-150 ease-out group"
               >
                 <button
                   onClick={() => {
@@ -84,7 +84,7 @@ export const BookmarksModal: React.FC<BookmarksModalProps> = ({
                 </button>
                 <button
                   onClick={() => onRemoveBookmark(b.id)}
-                  className="p-1 text-[var(--text-muted)] hover:text-rose-500 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="p-1 text-[var(--text-muted)] hover:text-rose-500 active:scale-90 rounded opacity-0 group-hover:opacity-100 transition-all duration-150 ease-out"
                   title="Remove Bookmark"
                 >
                   <Trash2 className="w-3.5 h-3.5" />

@@ -60,28 +60,28 @@ export const TabItem: React.FC<TabItemProps> = ({
         return (
           <span
             title="Surface (Active in RAM)"
-            className="w-2 h-2 rounded-full bg-sky-500 shadow-[0_0_6px_rgba(14,165,233,0.8)]"
+            className="w-2 h-2 rounded-full bg-sky-500 shadow-[0_0_6px_rgba(14,165,233,0.8)] transition-all duration-200 ease-out"
           />
         );
       case 'IDLE':
         return (
           <span
             title="Shallow (Idle - Ready)"
-            className="w-2 h-2 rounded-full bg-teal-400 opacity-80"
+            className="w-2 h-2 rounded-full bg-teal-400 opacity-80 transition-all duration-200 ease-out"
           />
         );
       case 'SUSPENDED':
         return (
           <span
             title="Deep (Suspended - RAM Freed)"
-            className="w-2 h-2 rounded-full bg-indigo-500 ring-1 ring-indigo-300"
+            className="w-2 h-2 rounded-full bg-indigo-500 ring-1 ring-indigo-300 transition-all duration-200 ease-out"
           />
         );
       case 'HIBERNATED':
         return (
           <span
             title="Abyss (Hibernated on Disk)"
-            className="w-2 h-2 rounded-full bg-slate-400 ring-1 ring-slate-300"
+            className="w-2 h-2 rounded-full bg-slate-400 ring-1 ring-slate-300 transition-all duration-200 ease-out"
           />
         );
     }
@@ -92,7 +92,7 @@ export const TabItem: React.FC<TabItemProps> = ({
       <div
         onClick={onSelect}
         onContextMenu={handleContextMenu}
-        className={`group relative flex items-center h-8 transition-all duration-150 rounded-t-lg border-t border-l border-r text-xs font-medium cursor-pointer no-drag ${
+        className={`group relative flex items-center h-8 animate-tab-enter transition-all duration-150 ease-out active:scale-[0.99] rounded-t-lg border-t border-l border-r text-xs font-medium cursor-pointer no-drag ${
           tab.pinned ? 'w-10 justify-center px-2' : 'max-w-[210px] min-w-[120px] flex-1 px-2.5'
         } ${
           isActive
@@ -116,7 +116,7 @@ export const TabItem: React.FC<TabItemProps> = ({
             <img
               src={tab.favicon}
               alt=""
-              className="w-3.5 h-3.5 object-contain"
+              className="w-3.5 h-3.5 object-contain transition-opacity duration-150"
               onError={(e) => {
                 // Fallback to globe icon on error
                 (e.target as HTMLElement).style.display = 'none';
@@ -130,7 +130,7 @@ export const TabItem: React.FC<TabItemProps> = ({
         {/* Title */}
         {!tab.pinned && (
           <span
-            className={`truncate flex-1 font-medium ${
+            className={`truncate flex-1 font-medium transition-colors duration-150 ${
               tab.state === 'SUSPENDED' || tab.state === 'HIBERNATED'
                 ? 'text-[var(--text-muted)] italic'
                 : ''
@@ -147,7 +147,7 @@ export const TabItem: React.FC<TabItemProps> = ({
               e.stopPropagation();
               onToggleMute();
             }}
-            className="flex-shrink-0 p-0.5 ml-1 text-[var(--accent)] hover:opacity-80 rounded"
+            className="flex-shrink-0 p-0.5 ml-1 text-[var(--accent)] hover:opacity-80 active:scale-90 rounded transition-all duration-150"
             title={tab.muted ? 'Unmute' : 'Mute tab'}
           >
             {tab.muted ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3 animate-pulse" />}
@@ -173,7 +173,7 @@ export const TabItem: React.FC<TabItemProps> = ({
               e.stopPropagation();
               onClose(e);
             }}
-            className={`flex-shrink-0 ml-1.5 p-0.5 rounded-full hover:bg-[var(--surface-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-opacity ${
+            className={`flex-shrink-0 ml-1.5 p-0.5 rounded-full hover:bg-[var(--surface-hover)] hover:scale-110 active:scale-95 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-150 ${
               isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
             }`}
             title="Close Tab (Ctrl+W)"
@@ -195,7 +195,7 @@ export const TabItem: React.FC<TabItemProps> = ({
             }}
           />
           <div
-            className="fixed z-50 bg-[var(--surface)] rounded-xl shadow-[var(--modal-shadow)] border border-[var(--border)] py-1.5 min-w-[190px] text-xs font-medium text-[var(--text-primary)] animate-scale-in"
+            className="fixed z-50 bg-[var(--surface)] rounded-xl shadow-[var(--modal-shadow)] border border-[var(--border)] py-1.5 min-w-[190px] text-xs font-medium text-[var(--text-primary)] animate-popover-enter"
             style={{ left: Math.min(contextMenu.x, window.innerWidth - 200), top: contextMenu.y + 4 }}
           >
             {tab.state === 'SUSPENDED' || tab.state === 'HIBERNATED' ? (

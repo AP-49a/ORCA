@@ -55,7 +55,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({
         <button
           type="button"
           onClick={onMinimize}
-          className="w-7 h-6 flex items-center justify-center rounded hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+          className="w-7 h-6 flex items-center justify-center rounded hover:bg-[var(--surface-hover)] active:scale-95 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-150 ease-out"
           title="Minimize"
         >
           <Minus className="w-3.5 h-3.5" />
@@ -63,7 +63,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({
         <button
           type="button"
           onClick={handleToggleMaximize}
-          className="w-7 h-6 flex items-center justify-center rounded hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+          className="w-7 h-6 flex items-center justify-center rounded hover:bg-[var(--surface-hover)] active:scale-95 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-150 ease-out"
           title={isMaximized ? 'Restore' : 'Maximize'}
         >
           {isMaximized ? (
@@ -75,7 +75,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({
         <button
           type="button"
           onClick={onClose}
-          className="w-7 h-6 flex items-center justify-center rounded hover:bg-red-500 hover:text-white text-[var(--text-secondary)] transition-colors"
+          className="w-7 h-6 flex items-center justify-center rounded hover:bg-red-500 hover:text-white active:scale-95 text-[var(--text-secondary)] transition-all duration-150 ease-out"
           title="Close"
         >
           <X className="w-3.5 h-3.5" />

@@ -79,7 +79,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-[var(--surface-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+            className="p-1.5 rounded-full hover:bg-[var(--surface-hover)] active:scale-95 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-150 ease-out"
           >
             <X className="w-4 h-4" />
           </button>
@@ -89,7 +89,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         <div className="flex space-x-2 py-3 border-b border-[var(--border-subtle)] flex-shrink-0 text-xs font-semibold">
           <button
             onClick={() => setActiveTab('general')}
-            className={`px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-xl active:scale-95 transition-all duration-150 ease-out flex items-center space-x-1.5 ${
               activeTab === 'general'
                 ? 'bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent-border)]'
                 : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
@@ -100,7 +100,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('memory')}
-            className={`px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-xl active:scale-95 transition-all duration-150 ease-out flex items-center space-x-1.5 ${
               activeTab === 'memory'
                 ? 'bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent-border)]'
                 : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
@@ -111,7 +111,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('shortcuts')}
-            className={`px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-xl active:scale-95 transition-all duration-150 ease-out flex items-center space-x-1.5 ${
               activeTab === 'shortcuts'
                 ? 'bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent-border)]'
                 : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
@@ -122,7 +122,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('about')}
-            className={`px-3 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-xl active:scale-95 transition-all duration-150 ease-out flex items-center space-x-1.5 ${
               activeTab === 'about'
                 ? 'bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent-border)]'
                 : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'

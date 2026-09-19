@@ -164,7 +164,7 @@ export const MemoryCenter: React.FC<MemoryCenterProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-[var(--surface-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+            className="p-1.5 rounded-full hover:bg-[var(--surface-hover)] active:scale-95 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-150 ease-out"
           >
             <X className="w-4 h-4" />
           </button>
@@ -196,7 +196,7 @@ export const MemoryCenter: React.FC<MemoryCenterProps> = ({
           <button
             onClick={handleOptimize}
             disabled={isOptimizing || stats.eligibleToSuspendCount === 0}
-            className={`px-4 py-2 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center space-x-1.5 ${
+            className={`px-4 py-2 text-white text-xs font-bold rounded-xl shadow-xs transition-all duration-150 ease-out active:scale-95 flex items-center space-x-1.5 ${
               stats.eligibleToSuspendCount > 0
                 ? 'bg-[var(--accent)] hover:bg-[var(--accent-hover)]'
                 : 'bg-[var(--surface-hover)] text-[var(--text-muted)] opacity-50 cursor-not-allowed'
@@ -506,14 +506,14 @@ export const MemoryCenter: React.FC<MemoryCenterProps> = ({
           <div className="flex items-center space-x-2">
             <button
               onClick={onRestoreAll}
-              className="px-3.5 py-1.5 rounded-xl border border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--surface-hover)] text-xs font-semibold transition-colors"
+              className="px-3.5 py-1.5 rounded-xl border border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--surface-hover)] active:scale-95 text-xs font-semibold transition-all duration-150 ease-out"
             >
               Restore All Tabs
             </button>
             <button
               onClick={handleOptimize}
               disabled={isOptimizing}
-              className="px-4 py-1.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-bold transition-colors shadow-xs"
+              className="px-4 py-1.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] active:scale-95 text-white text-xs font-bold transition-all duration-150 ease-out shadow-xs"
             >
               {isOptimizing ? 'Optimizing...' : 'Suspend Eligible'}
             </button>

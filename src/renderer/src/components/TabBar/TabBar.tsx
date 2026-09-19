@@ -73,7 +73,7 @@ export const TabBar: React.FC<TabBarProps> = ({
           {/* New Tab Button */}
           <button
             onClick={onCreateTab}
-            className="flex items-center justify-center w-7 h-7 mb-0.5 rounded-lg hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex-shrink-0"
+            className="flex items-center justify-center w-7 h-7 mb-0.5 rounded-lg hover:bg-[var(--surface-hover)] hover:scale-105 active:scale-95 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-150 ease-out flex-shrink-0"
             title="New Tab (Ctrl+T)"
           >
             <Plus className="w-4 h-4" />
@@ -87,12 +87,12 @@ export const TabBar: React.FC<TabBarProps> = ({
             onMouseDown={(e) => e.stopPropagation()}
             onPointerDown={(e) => e.stopPropagation()}
             style={{ WebkitAppRegion: 'no-drag', pointerEvents: 'auto' } as React.CSSProperties}
-            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
+            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold active:scale-95 transition-all duration-150 ease-out ${
               memoryStats.memoryPressure
                 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse'
                 : memoryStats.estimatedSavingsMB > 0
-                ? 'bg-[var(--accent-subtle)] hover:bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent-border)]'
-                : 'bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] border border-[var(--border)]'
+                ? 'bg-[var(--accent-subtle)] hover:bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent-border)] hover:shadow-xs'
+                : 'bg-[var(--surface)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] border border-[var(--border)] hover:shadow-xs'
             }`}
             title="Open Memory Center"
           >

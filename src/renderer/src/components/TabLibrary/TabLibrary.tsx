@@ -175,7 +175,7 @@ export const TabLibrary: React.FC<TabLibraryProps> = ({
                 <button
                   key={tier}
                   onClick={() => setSelectedTier(tier)}
-                  className={`px-2.5 py-1 rounded-lg transition-all ${
+                  className={`px-2.5 py-1 rounded-lg active:scale-95 transition-all duration-150 ease-out ${
                     selectedTier === tier
                       ? 'bg-[var(--surface)] text-[var(--text-primary)] shadow-xs'
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -278,7 +278,7 @@ export const TabLibrary: React.FC<TabLibraryProps> = ({
                           onSelectTab(tab.id);
                           onClose();
                         }}
-                        className="px-2.5 py-1 bg-[var(--accent-subtle)] hover:opacity-90 text-[var(--accent)] text-xs font-semibold rounded-lg transition-colors flex items-center space-x-1"
+                        className="px-2.5 py-1 bg-[var(--accent-subtle)] hover:opacity-90 active:scale-95 text-[var(--accent)] text-xs font-semibold rounded-lg transition-all duration-150 ease-out flex items-center space-x-1"
                         title="Restore to Surface"
                       >
                         <Sparkles className="w-3 h-3 text-[var(--accent)]" />
@@ -291,17 +291,17 @@ export const TabLibrary: React.FC<TabLibraryProps> = ({
                             onSelectTab(tab.id);
                             onClose();
                           }}
-                          className="px-2.5 py-1 bg-[var(--surface-subtle)] hover:bg-[var(--surface-hover)] text-[var(--text-primary)] text-xs font-semibold rounded-lg transition-colors"
+                          className="px-2.5 py-1 bg-[var(--surface-subtle)] hover:bg-[var(--surface-hover)] active:scale-95 text-[var(--text-primary)] text-xs font-semibold rounded-lg transition-all duration-150 ease-out"
                         >
                           Switch
                         </button>
                         <button
                           onClick={() => onSuspendTab(tab.id)}
                           disabled={isCurrent}
-                          className={`p-1.5 rounded-lg transition-colors ${
+                          className={`p-1.5 rounded-lg transition-all duration-150 ease-out ${
                             isCurrent
                               ? 'text-[var(--text-muted)] opacity-40 cursor-not-allowed'
-                              : 'text-indigo-400 hover:bg-indigo-500/10'
+                              : 'text-indigo-400 hover:bg-indigo-500/10 active:scale-95'
                           }`}
                           title="Suspend (Deep)"
                         >
@@ -310,10 +310,10 @@ export const TabLibrary: React.FC<TabLibraryProps> = ({
                         <button
                           onClick={() => onHibernateTab(tab.id)}
                           disabled={isCurrent}
-                          className={`p-1.5 rounded-lg transition-colors ${
+                          className={`p-1.5 rounded-lg transition-all duration-150 ease-out ${
                             isCurrent
                               ? 'text-[var(--text-muted)] opacity-40 cursor-not-allowed'
-                              : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
+                              : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] active:scale-95'
                           }`}
                           title="Hibernate (Abyss)"
                         >
@@ -324,7 +324,7 @@ export const TabLibrary: React.FC<TabLibraryProps> = ({
 
                     <button
                       onClick={() => onCloseTab(tab.id)}
-                      className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
+                      className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-rose-500 hover:bg-rose-500/10 active:scale-95 transition-all duration-150 ease-out"
                       title="Close Tab"
                     >
                       <Trash2 className="w-3.5 h-3.5" />

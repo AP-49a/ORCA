@@ -43,14 +43,14 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
             {history.length > 0 && (
               <button
                 onClick={onClearHistory}
-                className="text-xs text-rose-500 hover:text-rose-600 font-semibold px-2 py-1 rounded hover:bg-rose-500/10 transition-colors"
+                className="text-xs text-rose-500 hover:text-rose-600 active:scale-95 font-semibold px-2 py-1 rounded hover:bg-rose-500/10 transition-all duration-150 ease-out"
               >
                 Clear History
               </button>
             )}
             <button
               onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-[var(--surface-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+              className="p-1.5 rounded-full hover:bg-[var(--surface-hover)] active:scale-95 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-150 ease-out"
             >
               <X className="w-4 h-4" />
             </button>
@@ -66,7 +66,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search history..."
-              className="w-full pl-8 pr-3 py-1.5 bg-[var(--surface-subtle)] border border-[var(--border)] rounded-xl text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none focus:border-[var(--accent)] select-text"
+              className="w-full pl-8 pr-3 py-1.5 bg-[var(--surface-subtle)] border border-[var(--border)] rounded-xl text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none focus:border-[var(--accent)] transition-all duration-150 ease-out select-text"
             />
           </div>
         </div>
@@ -79,7 +79,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
             filtered.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between py-2 px-2 hover:bg-[var(--surface-hover)] rounded-xl transition-colors group"
+                className="flex items-center justify-between py-2 px-2 hover:bg-[var(--surface-hover)] active:scale-[0.99] rounded-xl transition-all duration-150 ease-out group"
               >
                 <button
                   onClick={() => {
@@ -100,7 +100,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
                   </span>
                   <button
                     onClick={() => onDeleteHistoryItem(item.id)}
-                    className="p-1 text-[var(--text-muted)] hover:text-rose-500 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="p-1 text-[var(--text-muted)] hover:text-rose-500 active:scale-90 rounded opacity-0 group-hover:opacity-100 transition-all duration-150 ease-out"
                     title="Delete item"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
