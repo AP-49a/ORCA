@@ -16,8 +16,11 @@ export function registerIpcHandlers(
 ) {
   // --- Tabs ---
   ipcMain.handle(IPC_CHANNELS.TAB_CREATE, async (_, options) => {
-    return tabManager.createTab(options);
+    const settings = storageManager.getSettings();
+    const opts = options ? { ...options, searchEngineUrl: options.searchEngineUrl || settings.searchEngine } : { searchEngineUrl: settings.searchEngine };
+    return tabManager.createTab(opts);
   });
+
 
   ipcMain.handle(IPC_CHANNELS.TAB_CLOSE, async (_, tabId) => {
     return tabManager.closeTab(tabId);

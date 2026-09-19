@@ -76,17 +76,38 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
     }
   }, [activeTab?.url, isFocused]);
 
+  // Subscribe to Ctrl+L / Alt+D focus events from main process and renderer
+  useEffect(() => {
+    const focusInput = () => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.select();
+      }
+    };
+
+    const unsubIpc = window.orcaAPI?.onFocusOmnibox?.(focusInput);
+    window.addEventListener('orca:focus-omnibox', focusInput);
+
+    return () => {
+      unsubIpc?.();
+      window.removeEventListener('orca:focus-omnibox', focusInput);
+    };
+  }, []);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       const nextUrl = inputValue.trim();
       console.log('[NavigationBar] submit:', nextUrl);
       inputRef.current?.blur();
-      onNavigate(nextUrl);
+      if (nextUrl) {
+        onNavigate(nextUrl);
+      }
     } else if (e.key === 'Escape') {
       setInputValue(activeTab?.url === 'orca://newtab' ? '' : (activeTab?.url || ''));
       inputRef.current?.blur();
     }
   };
+
 
   const isBookmarked = activeTab && bookmarks.some((b) => b.url === activeTab.url);
   const isHttps = activeTab?.url.startsWith('https://');

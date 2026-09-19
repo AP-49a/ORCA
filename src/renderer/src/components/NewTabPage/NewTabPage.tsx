@@ -63,7 +63,7 @@ export const NewTabPage: React.FC<NewTabPageProps> = ({
   ];
 
   return (
-    <div className="relative w-full h-[calc(100vh-116px)] overflow-y-auto bg-[var(--bg-primary)] flex flex-col items-center px-6 py-12 select-none">
+    <div className="relative w-full h-[calc(100vh-84px)] overflow-y-auto bg-[var(--bg-primary)] flex flex-col items-center px-6 py-12 select-none">
       {/* Background ambient subtle ocean gradients */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] blur-3xl pointer-events-none -z-10"

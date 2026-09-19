@@ -70,6 +70,7 @@ export const IPC_CHANNELS = {
 
   // Events from Main -> Renderer
   EVENT_THEME_CHANGED: 'event:theme-changed',
+  EVENT_FOCUS_OMNIBOX: 'event:focus-omnibox',
   EVENT_TABS_UPDATED: 'event:tabs-updated',
   EVENT_ACTIVE_TAB_CHANGED: 'event:active-tab-changed',
   EVENT_TAB_NAVIGATED: 'event:tab-navigated',
@@ -84,3 +85,4 @@ export const IPC_CHANNELS = {
   EVENT_HISTORY_UPDATED: 'event:history-updated',
   EVENT_SETTINGS_UPDATED: 'event:settings-updated',
 } as const;
+

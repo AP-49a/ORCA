@@ -1377,32 +1377,31 @@ export async function runMemoryManagerTests() {
 
 // ---------------------------------------------------------------------------
 // TASK 6 — Phase 3A Tab Management UX Tests
-// ---------------------------------------------------------------------------
+function createTestTabManager() {
+  const updatedTabs: Tab[][] = [];
+  const activeTabHistory: Array<string | null> = [];
+
+  const tabManager = new TabManager({
+    onTabsUpdated: (tabs) => updatedTabs.push([...tabs]),
+    onActiveTabChanged: (tabId) => activeTabHistory.push(tabId),
+    onTabNavigated: () => {},
+    onTabLoading: () => {},
+    onTabTitleUpdated: () => {},
+    onTabFaviconUpdated: () => {},
+    onTabStateChanged: () => {},
+    onHistoryItemAdded: () => {},
+  });
+
+  return { tabManager, updatedTabs, activeTabHistory };
+}
 
 export async function runTabManagementTests() {
   section('TASK 6 — Tab Management UX (Phase 3A)');
 
-  function createTestTabManager() {
-    const updatedTabs: Tab[][] = [];
-    const activeTabHistory: Array<string | null> = [];
-
-    const tabManager = new TabManager({
-      onTabsUpdated: (tabs) => updatedTabs.push([...tabs]),
-      onActiveTabChanged: (tabId) => activeTabHistory.push(tabId),
-      onTabNavigated: () => {},
-      onTabLoading: () => {},
-      onTabTitleUpdated: () => {},
-      onTabFaviconUpdated: () => {},
-      onTabStateChanged: () => {},
-      onHistoryItemAdded: () => {},
-    });
-
-    return { tabManager, updatedTabs, activeTabHistory };
-  }
-
   // 1. New Tab creation
   {
     const { tabManager } = createTestTabManager();
+
     const tab1 = await tabManager.createTab({ url: 'https://example.com', active: true });
     assert(tab1.url === 'https://example.com', 'createTab: creates tab with specified URL');
     assert(tab1.state === 'ACTIVE', 'createTab: active tab has ACTIVE state');
@@ -1482,6 +1481,181 @@ export async function runTabManagementTests() {
 }
 
 // ---------------------------------------------------------------------------
+// TASK 7 — Core Navigation & Omnibox URL Classification Tests
+// ---------------------------------------------------------------------------
+
+async function runCoreNavigationTests() {
+  section('TASK 7 — Core Navigation & Omnibox URL Classification');
+
+  const defaultEngine = 'https://www.google.com/search?q=';
+  const customEngine = 'https://duckduckgo.com/?q=';
+
+  // 1. Explicit HTTPS URL
+  assert(
+    NavigationManager.normalizeInput('https://github.com') === 'https://github.com',
+    'normalizeInput: explicit HTTPS URL is preserved as-is'
+  );
+  assert(
+    NavigationManager.normalizeInput('https://youtube.com/watch?v=123') === 'https://youtube.com/watch?v=123',
+    'normalizeInput: explicit HTTPS URL with path and query is preserved'
+  );
+
+  // 2. Explicit HTTP URL
+  assert(
+    NavigationManager.normalizeInput('http://example.com') === 'http://example.com',
+    'normalizeInput: explicit HTTP URL is preserved as-is'
+  );
+  assert(
+    NavigationManager.normalizeInput('http://insecure-site.org/page') === 'http://insecure-site.org/page',
+    'normalizeInput: explicit HTTP URL with path is preserved'
+  );
+
+  // 3. Domain without protocol
+  assert(
+    NavigationManager.normalizeInput('youtube.com') === 'https://youtube.com',
+    'normalizeInput: domain "youtube.com" receives https:// protocol'
+  );
+  assert(
+    NavigationManager.normalizeInput('github.com') === 'https://github.com',
+    'normalizeInput: domain "github.com" receives https:// protocol'
+  );
+  assert(
+    NavigationManager.normalizeInput('SUB.DOMAIN.ORG') === 'https://SUB.DOMAIN.ORG',
+    'normalizeInput: uppercase domain receives https:// protocol'
+  );
+
+  // 4. Domain with path and query
+  assert(
+    NavigationManager.normalizeInput('github.com/username/repo') === 'https://github.com/username/repo',
+    'normalizeInput: domain with repository path receives https://'
+  );
+  assert(
+    NavigationManager.normalizeInput('sub.example.co.uk/search?q=test#top') === 'https://sub.example.co.uk/search?q=test#top',
+    'normalizeInput: multi-part TLD with path, query, and fragment receives https://'
+  );
+
+  // 5. Localhost and IP addresses
+  assert(
+    NavigationManager.normalizeInput('localhost:3000') === 'http://localhost:3000',
+    'normalizeInput: localhost with port maps to http://'
+  );
+  assert(
+    NavigationManager.normalizeInput('localhost:8080/dashboard') === 'http://localhost:8080/dashboard',
+    'normalizeInput: localhost with port and path maps to http://'
+  );
+  assert(
+    NavigationManager.normalizeInput('127.0.0.1:8000') === 'http://127.0.0.1:8000',
+    'normalizeInput: IPv4 address with port maps to http://'
+  );
+  assert(
+    NavigationManager.normalizeInput('192.168.1.1') === 'http://192.168.1.1',
+    'normalizeInput: standard LAN IPv4 address maps to http://'
+  );
+
+  // 6. Single-word search queries
+  assert(
+    NavigationManager.normalizeInput('youtube') === `${defaultEngine}youtube`,
+    'normalizeInput: single-word "youtube" is treated as search query'
+  );
+  assert(
+    NavigationManager.normalizeInput('weather') === `${defaultEngine}weather`,
+    'normalizeInput: single-word "weather" is treated as search query'
+  );
+  assert(
+    NavigationManager.normalizeInput('rust') === `${defaultEngine}rust`,
+    'normalizeInput: single-word keyword "rust" is treated as search query'
+  );
+
+  // 7. Multi-word search queries
+  assert(
+    NavigationManager.normalizeInput('best laptops for programming') === `${defaultEngine}best%20laptops%20for%20programming`,
+    'normalizeInput: "best laptops for programming" encodes query with %20'
+  );
+  assert(
+    NavigationManager.normalizeInput('weather today') === `${defaultEngine}weather%20today`,
+    'normalizeInput: "weather today" encodes query properly'
+  );
+  assert(
+    NavigationManager.normalizeInput('React documentation') === `${defaultEngine}React%20documentation`,
+    'normalizeInput: "React documentation" is treated as search query'
+  );
+
+  // 8. Special characters in search queries
+  assert(
+    NavigationManager.normalizeInput('C programming pointers') === `${defaultEngine}C%20programming%20pointers`,
+    'normalizeInput: "C programming pointers" encodes properly'
+  );
+  assert(
+    NavigationManager.normalizeInput('C++ & Rust #1') === `${defaultEngine}C%2B%2B%20%26%20Rust%20%231`,
+    'normalizeInput: special characters (+, &, #) are safely percent-encoded'
+  );
+
+  // 9. Empty and whitespace-only input
+  assert(
+    NavigationManager.normalizeInput('') === 'orca://newtab',
+    'normalizeInput: empty string defaults to orca://newtab'
+  );
+  assert(
+    NavigationManager.normalizeInput('   ') === 'orca://newtab',
+    'normalizeInput: whitespace-only string defaults to orca://newtab'
+  );
+
+  // 10. Custom search engine support
+  assert(
+    NavigationManager.normalizeInput('hello world', customEngine) === `${customEngine}hello%20world`,
+    'normalizeInput: respects custom search engine URL'
+  );
+
+  // 11. Domain Extraction utility
+  assert(
+    NavigationManager.extractDomain('https://github.com/username/repo') === 'github.com',
+    'extractDomain: extracts host from https URL'
+  );
+  assert(
+    NavigationManager.extractDomain('orca://newtab') === 'orca',
+    'extractDomain: returns "orca" for internal pages'
+  );
+
+  // 12. TabManager navigateTab integration with search query
+  {
+    const { tabManager } = createTestTabManager();
+    const tab = await tabManager.createTab({ url: 'orca://newtab', active: true });
+    await tabManager.navigateTab(tab.id, 'youtube', defaultEngine);
+    const updatedTab = tabManager.getTab(tab.id);
+    assert(
+      updatedTab?.url === `${defaultEngine}youtube`,
+      'TabManager.navigateTab: typing "youtube" navigates to search engine URL'
+    );
+    assert(
+      updatedTab?.loading === true,
+      'TabManager.navigateTab: initiates loading state on web navigation'
+    );
+  }
+
+  // 13. TabManager navigateTab integration with direct domain
+  {
+    const { tabManager } = createTestTabManager();
+    const tab = await tabManager.createTab({ url: 'orca://newtab', active: true });
+    await tabManager.navigateTab(tab.id, 'youtube.com', defaultEngine);
+    const updatedTab = tabManager.getTab(tab.id);
+    assert(
+      updatedTab?.url === 'https://youtube.com',
+      'TabManager.navigateTab: typing "youtube.com" navigates directly to https://youtube.com'
+    );
+  }
+
+  // 14. TabManager createTab integration with query normalization
+  {
+    const { tabManager } = createTestTabManager();
+    const tab = await tabManager.createTab({ url: 'best laptops for programming', searchEngineUrl: defaultEngine });
+    assert(
+      tab.url === `${defaultEngine}best%20laptops%20for%20programming`,
+      'TabManager.createTab: normalizes query input on tab creation'
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Main entry point
 // ---------------------------------------------------------------------------
 
@@ -1495,6 +1669,7 @@ export async function runMemoryEngineTests() {
   runGetSuspensionCandidatesTests();
   await runMemoryManagerTests();
   await runTabManagementTests();
+  await runCoreNavigationTests();
 
   // -------------------------------------------------------------------------
   // Summary
@@ -1518,4 +1693,5 @@ export async function runMemoryEngineTests() {
 }
 
 runMemoryEngineTests();
+
 

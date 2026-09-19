@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 export class BrowserWindowManager {
   private mainWindow: BrowserWindow | null = null;
   private tabManager: TabManager;
-  private readonly TOP_CHROME_HEIGHT = 116; // Title bar (32px) + Tab bar (40px) + Nav bar (44px)
+  private readonly TOP_CHROME_HEIGHT = 84; // Tab bar (40px) + Nav bar (44px)
   private sendToRenderer: ((channel: string, ...args: any[]) => void) | null = null;
 
   // Resolved icon paths (set once in createMainWindow)

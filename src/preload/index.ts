@@ -102,7 +102,11 @@ export interface OrcaAPI {
   // Theme
   getTheme: () => Promise<boolean>; // resolves true = dark mode
   onThemeChanged: (callback: (isDark: boolean) => void) => () => void;
+
+  // Omnibox
+  onFocusOmnibox: (callback: () => void) => () => void;
 }
+
 
 const api: OrcaAPI = {
   // Tabs
@@ -245,7 +249,15 @@ const api: OrcaAPI = {
     ipcRenderer.on(IPC_CHANNELS.EVENT_THEME_CHANGED, handler);
     return () => ipcRenderer.removeListener(IPC_CHANNELS.EVENT_THEME_CHANGED, handler);
   },
+
+  // Omnibox
+  onFocusOmnibox: (callback) => {
+    const handler = () => callback();
+    ipcRenderer.on(IPC_CHANNELS.EVENT_FOCUS_OMNIBOX, handler);
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.EVENT_FOCUS_OMNIBOX, handler);
+  },
 };
+
 
 contextBridge.exposeInMainWorld('orcaAPI', api);
 console.log('[ORCA PRELOAD] READY');

@@ -47,8 +47,8 @@ export class TabManager {
   private views: Map<string, any> = new Map();
   private activeTabId: string | null = null;
   private callbacks: TabManagerCallbacks;
-  private contentBounds = { x: 0, y: 116, width: 1200, height: 684 };
-  private readonly chromeHeight = 116;
+  private contentBounds = { x: 0, y: 84, width: 1200, height: 716 };
+  private readonly chromeHeight = 84;
   private isPanelOverlayActive = false;
   // Maps tabId -> renderer process PID for real memory correlation
   private tabPidMap: Map<string, number> = new Map();
@@ -236,9 +236,11 @@ export class TabManager {
     workspaceId?: string;
     active?: boolean;
     pinned?: boolean;
+    searchEngineUrl?: string;
   }): Promise<Tab> {
     const id = `tab-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-    const url = options?.url || 'orca://newtab';
+    const rawUrl = options?.url || 'orca://newtab';
+    const url = rawUrl === 'orca://newtab' ? rawUrl : NavigationManager.normalizeInput(rawUrl, options?.searchEngineUrl);
     const workspaceId = options?.workspaceId || 'ws-personal';
     const active = options?.active ?? true;
 
@@ -253,7 +255,7 @@ export class TabManager {
       workspaceId,
       pinned: options?.pinned ?? false,
       muted: false,
-      loading: false,
+      loading: !url.startsWith('orca://'),
       canGoBack: false,
       canGoForward: false,
       estimatedMemoryMB: 180,
@@ -305,6 +307,9 @@ export class TabManager {
     if (tab.url && !tab.url.startsWith('orca://')) {
       view.webContents.loadURL(tab.url).catch((err: any) => {
         console.warn(`Failed to load ${tab.url}:`, err.message);
+        tab.loading = false;
+        this.callbacks.onTabLoading(tab.id, false);
+        this.notifyTabsUpdated();
       });
     }
 
@@ -382,6 +387,12 @@ export class TabManager {
 
     wc.on('did-fail-load', (_: any, errorCode: number, errorDescription: string, validatedURL: string) => {
       console.log(`[ORCA WEB] event: did-fail-load url: ${validatedURL} errorCode: ${errorCode} errorDescription: ${errorDescription}`);
+      const tab = this.tabs.get(tabId);
+      if (tab) {
+        tab.loading = false;
+        this.callbacks.onTabLoading(tabId, false);
+        this.notifyTabsUpdated();
+      }
     });
 
     wc.on('render-process-gone', (_: any, details: any) => {
@@ -404,12 +415,67 @@ export class TabManager {
       }
     });
 
+    // WebContents keyboard shortcut forwarding for Ctrl+L, Ctrl+T, Ctrl+W, etc.
+    wc.on('before-input-event', (_: any, input: any) => {
+      if (input.type !== 'keyDown') return;
+
+      const isCtrl = input.control || input.meta;
+      const isShift = input.shift;
+      const isAlt = input.alt;
+      const key = (input.key || '').toLowerCase();
+
+      // Ctrl+L or Alt+D: Focus Omnibox
+      if ((isCtrl && !isShift && !isAlt && key === 'l') || (!isCtrl && !isShift && isAlt && key === 'd')) {
+        if (this.window && !this.window.isDestroyed()) {
+          (this.window as any).webContents?.send('event:focus-omnibox');
+        }
+        return;
+      }
+
+      // Ctrl+T: New Tab
+      if (isCtrl && !isShift && !isAlt && key === 't') {
+        this.createTab({ active: true });
+        return;
+      }
+
+      // Ctrl+W: Close Tab
+      if (isCtrl && !isShift && !isAlt && key === 'w') {
+        this.closeTab(tabId);
+        return;
+      }
+
+      // Ctrl+Shift+T: Reopen Closed Tab
+      if (isCtrl && isShift && !isAlt && key === 't') {
+        this.reopenClosedTab();
+        return;
+      }
+
+      // Ctrl+R: Reload Tab
+      if (isCtrl && !isShift && !isAlt && key === 'r') {
+        this.reloadTab(tabId);
+        return;
+      }
+
+      // Alt+Left: Go Back
+      if (!isCtrl && !isShift && isAlt && input.key === 'ArrowLeft') {
+        this.goBack(tabId);
+        return;
+      }
+
+      // Alt+Right: Go Forward
+      if (!isCtrl && !isShift && isAlt && input.key === 'ArrowRight') {
+        this.goForward(tabId);
+        return;
+      }
+    });
+
     // Handle new-window / target="_blank"
     wc.setWindowOpenHandler((details: any) => {
       this.createTab({ url: details.url, active: true });
       return { action: 'deny' };
     });
   }
+
 
   /**
    * Switches the active tab
@@ -537,7 +603,7 @@ export class TabManager {
   /**
    * Navigates a tab to a new URL
    */
-  public async navigateTab(tabId: string, rawInput: string, searchEngineUrl: string): Promise<void> {
+  public async navigateTab(tabId: string, rawInput: string, searchEngineUrl?: string): Promise<void> {
     const tab = this.tabs.get(tabId);
     if (!tab) return;
 
@@ -554,6 +620,7 @@ export class TabManager {
         this.detachViewFromWindow(view);
       }
     } else {
+      tab.loading = true;
       let view = this.views.get(tabId);
       if (!view) {
         view = this.createViewForTab(tab);
@@ -565,11 +632,15 @@ export class TabManager {
       console.log(`[ORCA VIEW] URL: ${targetUrl}`);
       view.webContents.loadURL(targetUrl).catch((err: any) => {
         console.warn(`Failed to navigate to ${targetUrl}:`, err.message);
+        tab.loading = false;
+        this.callbacks.onTabLoading(tab.id, false);
+        this.notifyTabsUpdated();
       });
     }
 
     this.notifyTabsUpdated();
   }
+
 
   public async reloadTab(tabId: string): Promise<void> {
     const view = this.views.get(tabId);

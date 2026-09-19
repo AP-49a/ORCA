@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useBrowserStore } from './store/useBrowserStore';
-import { TitleBar } from './components/TitleBar/TitleBar';
 import { TabBar } from './components/TabBar/TabBar';
 import { NavigationBar } from './components/NavigationBar/NavigationBar';
 import { NewTabPage } from './components/NewTabPage/NewTabPage';
@@ -92,11 +91,22 @@ export const App: React.FC = () => {
         }
         return;
       }
+
+      // Ctrl+L or Alt+D: Focus Omnibox
+      if (
+        (event.ctrlKey && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'l') ||
+        (!event.ctrlKey && !event.shiftKey && event.altKey && event.key.toLowerCase() === 'd')
+      ) {
+        event.preventDefault();
+        window.dispatchEvent(new CustomEvent('orca:focus-omnibox'));
+        return;
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [store.activeWorkspaceTabs, store.activeTabId, store.createTab, store.closeTab, store.selectTab, store.reopenClosedTab]);
+
 
   useEffect(() => {
     const theme = store.settings.theme;
@@ -175,14 +185,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="flex flex-col w-screen h-screen overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      {/* 0. CUSTOM TITLE BAR */}
-      <TitleBar
-        onMinimize={store.minimizeWindow}
-        onMaximize={store.maximizeWindow}
-        onClose={store.closeWindow}
-      />
-
-      {/* 1. TOP TAB BAR */}
+      {/* 1. TOP TAB BAR (Integrated with Window Controls & Memory Health) */}
       <TabBar
         tabs={store.activeWorkspaceTabs}
         activeTabId={store.activeTabId}
@@ -198,6 +201,9 @@ export const App: React.FC = () => {
         onRestoreTab={store.restoreTab}
         onToggleKeepAwakeTab={store.setTabKeepAwake}
         onOpenMemoryCenter={() => store.setIsMemoryCenterOpen(true)}
+        onMinimizeWindow={store.minimizeWindow}
+        onMaximizeWindow={store.maximizeWindow}
+        onCloseWindow={store.closeWindow}
       />
 
       {/* 2. NAVIGATION BAR */}
